@@ -1,0 +1,69 @@
+<view class="page page-footer">
+  <!-- ① 药物与剂量 -->
+  <view class="card">
+    <view class="card-label">这一针</view>
+
+    <view class="sec-title">药</view>
+    <view wx:if="{{medId}}" class="dose-med-name">{{medName}}</view>
+    <chip-group wx:else options="{{medOptions}}" mode="single" size="lg" bind:change="onPickMed" />
+
+    <view class="sec-title" wx:if="{{medId}}">剂量</view>
+    <chip-group wx:if="{{medId}}" options="{{doseOptions}}" value="{{doseMg}}" mode="single" size="md" bind:change="onPickDose" />
+    <view class="form-row-help" wx:if="{{medId}}">以医生给你的方案为准；不在这排里的话，记备注里。</view>
+  </view>
+
+  <!-- ② 时间 -->
+  <view class="card">
+    <view class="card-label">什么时候打的</view>
+    <view class="dose-time-row">
+      <picker mode="date" value="{{dateValue}}" end="{{dateMax}}" bindchange="onPickDate">
+        <view class="dose-time-value">{{dateLabel}}</view>
+      </picker>
+      <picker mode="time" value="{{timeValue}}" bindchange="onPickTime">
+        <view class="dose-time-value">{{timeValue}}</view>
+      </picker>
+    </view>
+    <view class="form-row-help">默认现在，可以改。打完多久都可以记。</view>
+  </view>
+
+  <!-- ③ 部位 -->
+  <view class="card" wx:if="{{medId}}">
+    <view class="card-label">打在哪里</view>
+    <view class="dose-site-sub">推荐这次：<text class="dose-site-reco">{{nextSiteName}}</text>（离肚脐 5cm 以外；上臂通常需要别人帮忙）</view>
+    <view class="dose-site-grid">
+      <view
+        wx:for="{{sites}}"
+        wx:key="key"
+        class="site {{item.recommended ? 'site-recommend' : ''}} {{item.selected ? 'site-selected' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="onPickSite"
+      >
+        <view wx:if="{{item.recommended}}" class="site-badge">推荐</view>
+        <view class="site-name">{{item.name}}</view>
+        <view class="site-last">{{item.lastText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ④ 备注 -->
+  <view class="card" wx:if="{{medId}}">
+    <view class="form-row">
+      <view class="form-row-title">备注</view>
+      <view class="form-row-value">
+        <input placeholder="选填，比如：今天不太疼" value="{{note}}" bindinput="onNote" />
+      </view>
+    </view>
+  </view>
+
+  <!-- ⑤ 最近记录 -->
+  <view class="card" wx:if="{{recent.length}}">
+    <view class="card-label">最近记录（长按可删除）</view>
+    <view wx:for="{{recent}}" wx:key="id" class="dose-recent-item" data-id="{{item.id}}" bindlongpress="onRecentLongPress">
+      {{item.text}}
+    </view>
+  </view>
+
+  <view class="footer-bar">
+    <button class="btn-primary {{canSave ? '' : 'btn-disabled'}}" bindtap="onSave">记好了</button>
+  </view>
+</view>

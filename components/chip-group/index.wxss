@@ -1,0 +1,70 @@
+/* chip-group — 选项 chip（03-VISUAL §4.4）
+   组件样式隔离，全局类不可用，全部自绘；只用 CSS 变量，不写死色值 */
+.cg-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+/* 固定列数网格由 js 生成内联 gridStyle（display:grid）控制；间距交给 chip 的 margin */
+.cg-chip {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 72rpx;
+  padding: 0 28rpx;
+  margin: 0 16rpx 16rpx 0;
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  border: 2rpx solid transparent; /* 透明描边占位，避免选中加描边时跳动 */
+  border-radius: var(--r-pill);
+  font-size: var(--fs-body-sm);
+  line-height: 1.5;
+  transition: transform 100ms ease-out;
+}
+/* md：默认居中 */
+.cg-label {
+  white-space: nowrap;
+}
+/* lg（onboarding / 推荐问题）：高 96rpx，r-md，左对齐 */
+.cg-lg .cg-chip {
+  height: 96rpx;
+  border-radius: var(--r-md);
+  font-size: var(--fs-body);
+  justify-content: flex-start;
+  text-align: left;
+}
+/* 网格中的 lg chip 撑满格子 */
+.cg-fill {
+  width: 100%;
+}
+/* 选中（single/multi）与 tri「重」：primary 底 on-primary 字 */
+.cg-on {
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+}
+/* tri「轻」：primary-soft 底 + 2rpx primary 描边 */
+.cg-light {
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-color: var(--c-primary);
+}
+/* 按下 scale(.96) 100ms（§4.4） */
+.cg-press {
+  transform: scale(0.96);
+}
+/* tri「重」右上角标：28rpx 圆、danger 底、20rpx 白字
+   （白字用 --c-on-primary：wxss 禁写十六进制，取值同 app.wxss .btn-danger 的处理） */
+.cg-badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 50%;
+  background: var(--c-danger);
+  color: var(--c-on-primary);
+  font-size: 20rpx;
+  line-height: 28rpx;
+  text-align: center;
+}

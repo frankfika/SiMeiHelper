@@ -1,0 +1,237 @@
+<!-- pages/log — 记录页（02-UX §3.2 逐块 / §4.2 打卡闭环 / §6.2 难受模式；03-VISUAL §5.2 逐屏） -->
+<view class="page page-log">
+
+  <!-- 首次引导 / 欢迎回来（02-UX §3.2 空态 / §5.1） -->
+  <view class="guide-line" wx:if="{{firstCheckin}}">第一次打卡？试试跟小美说一句话 👇</view>
+  <view class="guide-line" wx:elif="{{welcomeBack}}">欢迎回来 🌱</view>
+
+  <!-- ① 日期切换行：‹ 今天 M月D日 ›（不晚于今天；早于 30 天只读） -->
+  <view class="date-nav">
+    <view class="date-nav-arrow {{canPrev ? '' : 'date-nav-off'}}" hover-class="btn-hover"
+          bindtap="onPrevDay" aria-role="button" aria-label="前一天">‹</view>
+    <view class="date-nav-title">{{dateText}}</view>
+    <view class="date-nav-arrow {{canNext ? '' : 'date-nav-off'}}" hover-class="btn-hover"
+          bindtap="onNextDay" aria-role="button" aria-label="后一天">›</view>
+  </view>
+  <view class="notice ro-notice" wx:if="{{readOnly}}">超过 30 天的记录只能查看</view>
+
+  <!-- ② 一句话卡（card-ai；✨ 前缀由全局 .card-ai .card-label 提供） -->
+  <view class="card-ai">
+    <view class="card-label">一句话告诉小美</view>
+    <textarea class="nl-input" value="{{nlText}}" auto-height maxlength="200" disabled="{{readOnly}}"
+              placeholder="比如：今天 88 公斤，有点恶心，吃了 3 份蛋白，走了半小时"
+              placeholder-class="ph" bindinput="onNlInput"></textarea>
+    <view class="nl-actions">
+      <button class="btn-secondary-sm" hover-class="btn-hover" bindtap="onNlSubmit"
+              disabled="{{readOnly || !nlText || nlParsing}}">{{nlParsing ? '小美在看…' : '帮我填'}}</button>
+    </view>
+
+    <!-- 红旗安全卡（05-DATA §6.1：命中仍允许填入） -->
+    <view class="nl-safety bubble-safety" wx:if="{{nlSafety}}">
+      <text>{{nlSafety.reply}}</text>
+      <view class="bubble-actions" wx:if="{{nlSafety.actions && nlSafety.actions.length}}">
+        <button wx:for="{{nlSafety.actions}}" wx:key="label"
+                class="{{item.kind === 'call' ? 'btn-danger' : 'btn-secondary-sm'}}"
+                hover-class="btn-hover" data-action="{{item}}" bindtap="onSafetyAction">{{item.label}}</button>
+      </view>
+    </view>
+
+    <!-- 预览块：chip 可逐个 × 移除 →「填进去」合并写入 -->
+    <view class="nl-preview" wx:if="{{showPreview}}">
+      <view class="nl-preview-title">小美帮你理出了这些，对吗？</view>
+      <view class="nl-preview-chips" wx:if="{{preview.length}}">
+        <view class="nl-chip" wx:for="{{preview}}" wx:key="label">
+          <text>{{item.label}}</text>
+          <text class="nl-chip-x" data-idx="{{index}}" catchtap="onPreviewRemove"
+                aria-role="button" aria-label="移除{{item.label}}">×</text>
+        </view>
+      </view>
+      <view class="nl-preview-empty" wx:if="{{previewEmpty}}">这句话我没读出具体数字，下面点一点也很快 👇</view>
+      <view class="nl-preview-btns">
+        <button wx:if="{{preview.length}}" class="btn-primary nl-apply" hover-class="btn-hover"
+                bindtap="onPreviewApply">填进去</button>
+        <text class="btn-text" hover-class="btn-hover" bindtap="onPreviewCancel">不对，我自己填</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ③ 结构化打卡卡（一行一项，1rpx 分隔线） -->
+  <view class="card">
+    <!-- ④ 完成反馈的常驻小字（气泡 3s 后落在这里，不自动消失） -->
+    <view class="feedback-line" wx:if="{{feedbackStage === 'card'}}">{{feedback}}</view>
+
+    <!-- ④ 难受提示条（🌿 前缀由全局 .banner-warning 提供；02-UX §3.2 ③） -->
+    <view class="banner-warning card-banner" wx:if="{{badDay}}">
+      <text class="card-banner-text">今天辛苦了。要不要看看怎么缓解？</text>
+      <text class="card-banner-link" hover-class="btn-hover" bindtap="goSos">看看 ›</text>
+    </view>
+
+    <!-- 1 体重 -->
+    <view id="row-weight" class="form-row {{hlRows.weight ? 'row-flash' : ''}}">
+      <view class="form-row-title">体重</view>
+      <view class="form-row-right">
+        <input class="form-row-value num weight-input" type="digit" value="{{weightText}}"
+               placeholder="{{weightPh}}" placeholder-class="ph" disabled="{{readOnly}}"
+               bindinput="onWeightInput" bindblur="onWeightBlur" />
+        <text class="form-row-unit">kg</text>
+      </view>
+    </view>
+    <view class="form-error" wx:if="{{weightError}}">{{weightError}}</view>
+    <view class="row-note" wx:if="{{weightNote && !weightError}}">{{weightNote}}</view>
+
+    <!-- 2 今天感觉（再点一次取消） -->
+    <view id="row-feel" class="form-row {{hlRows.feel ? 'row-flash' : ''}}">
+      <view class="form-row-title">今天感觉</view>
+      <view class="form-row-right">
+        <chip-group options="{{feelOptions}}" value="{{feel}}" mode="single" bind:change="onFeelChange" />
+      </view>
+    </view>
+
+    <!-- 3 不舒服的地方（tri：点一次轻，再点重，三次取消） -->
+    <view id="row-sym" class="row-stack {{hlRows.sym ? 'row-flash' : ''}}">
+      <view class="form-row-title">不舒服的地方</view>
+      <view class="row-ctrl">
+        <chip-group options="{{symptomOptions}}" value="{{symptoms}}" mode="tri" bind:change="onSymChange" />
+      </view>
+      <view class="row-note" wx:if="{{tipSym}}">点一次是轻，再点一次是重</view>
+    </view>
+
+    <!-- 4-7 蛋白 / 喝水 / 有氧 / 力量：难受模式收进折叠区（§6.2），正常模式直接铺开 -->
+    <block wx:if="{{!badDay}}">
+      <view id="row-protein" class="row-stack {{hlRows.protein ? 'row-flash' : ''}}">
+        <view class="row-head">
+          <view class="form-row-title">蛋白</view>
+          <view class="form-row-help" hover-class="card-hover" bindtap="onProteinHelp"
+                aria-role="button" aria-label="什么是 1 份蛋白">?</view>
+        </view>
+        <view class="row-ctrl">
+          <cup-grid target="{{proteinTarget}}" value="{{protein}}" icon="🥚" max="{{8}}" bind:change="onProteinChange" />
+        </view>
+      </view>
+
+      <view id="row-water" class="row-stack {{hlRows.water ? 'row-flash' : ''}}">
+        <view class="row-head">
+          <view class="form-row-title">喝水</view>
+          <text class="row-hint">1 杯=250ml</text>
+        </view>
+        <view class="row-ctrl">
+          <cup-grid target="{{waterTarget}}" value="{{water}}" icon="💧" max="{{16}}" bind:change="onWaterChange" />
+        </view>
+      </view>
+
+      <view id="row-cardio" class="row-stack {{hlRows.cardio ? 'row-flash' : ''}}">
+        <view class="form-row-title">有氧运动</view>
+        <view class="row-ctrl cardio-ctrl">
+          <chip-group options="{{cardioOptions}}" value="{{cardio}}" mode="single" bind:change="onCardioChange" />
+          <text class="row-hint">分钟</text>
+        </view>
+      </view>
+
+      <view id="row-strength" class="form-row {{hlRows.strength ? 'row-flash' : ''}}">
+        <view class="form-row-title strength-title">做了力量训练（深蹲、哑铃、弹力带都算）</view>
+        <switch checked="{{strength}}" color="{{switchColor}}" bindchange="onStrengthChange" />
+      </view>
+    </block>
+
+    <!-- 8 食欲（再点一次取消） -->
+    <view id="row-appetite" class="form-row {{hlRows.appetite ? 'row-flash' : ''}}">
+      <view class="form-row-title">食欲</view>
+      <view class="form-row-right">
+        <chip-group options="{{appetiteOptions}}" value="{{appetite}}" mode="single" bind:change="onAppetiteChange" />
+      </view>
+    </view>
+
+    <!-- 难受模式折叠区：默认折叠（§6.2）；已有数据时页面逻辑会自动展开 -->
+    <block wx:if="{{badDay}}">
+      <view class="fold-head" hover-class="card-hover" bindtap="onFoldToggle"
+            aria-role="button" aria-label="展开或收起其他打卡项">
+        <text class="form-row-title">其他（今天可以不填）</text>
+        <text class="fold-arrow {{otherOpen ? 'fold-arrow-on' : ''}}">›</text>
+      </view>
+      <block wx:if="{{otherOpen}}">
+        <view id="row-protein" class="row-stack {{hlRows.protein ? 'row-flash' : ''}}">
+          <view class="row-head">
+            <view class="form-row-title">蛋白</view>
+            <view class="form-row-help" hover-class="card-hover" bindtap="onProteinHelp"
+                  aria-role="button" aria-label="什么是 1 份蛋白">?</view>
+          </view>
+          <view class="row-ctrl">
+            <cup-grid target="{{proteinTarget}}" value="{{protein}}" icon="🥚" max="{{8}}" bind:change="onProteinChange" />
+          </view>
+        </view>
+
+        <view id="row-water" class="row-stack {{hlRows.water ? 'row-flash' : ''}}">
+          <view class="row-head">
+            <view class="form-row-title">喝水</view>
+            <text class="row-hint">1 杯=250ml</text>
+          </view>
+          <view class="row-ctrl">
+            <cup-grid target="{{waterTarget}}" value="{{water}}" icon="💧" max="{{16}}" bind:change="onWaterChange" />
+          </view>
+        </view>
+
+        <view id="row-cardio" class="row-stack {{hlRows.cardio ? 'row-flash' : ''}}">
+          <view class="form-row-title">有氧运动</view>
+          <view class="row-ctrl cardio-ctrl">
+            <chip-group options="{{cardioOptions}}" value="{{cardio}}" mode="single" bind:change="onCardioChange" />
+            <text class="row-hint">分钟</text>
+          </view>
+        </view>
+
+        <view id="row-strength" class="form-row {{hlRows.strength ? 'row-flash' : ''}}">
+          <view class="form-row-title strength-title">做了力量训练（深蹲、哑铃、弹力带都算）</view>
+          <switch checked="{{strength}}" color="{{switchColor}}" bindchange="onStrengthChange" />
+        </view>
+      </block>
+    </block>
+  </view>
+
+  <!-- ⑤ 打卡月历（7 列；完成=primary 实心点 / 有记录=空心 / 难受=warning 小三角 / 打针=💉） -->
+  <view class="card">
+    <view class="cal-head">
+      <view class="card-label cal-label">这个月</view>
+      <text class="cal-stats num" wx:if="{{streakText}}">{{streakText}}</text>
+      <text class="btn-text cal-trend" hover-class="btn-hover" bindtap="goTrend">体重趋势 ›</text>
+    </view>
+    <view class="cal-grid cal-dow">
+      <text class="cal-dow-cell" wx:for="{{dowLabels}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="cal-grid">
+      <view wx:for="{{calCells}}" wx:key="idx"
+            class="cal-cell {{item.empty ? 'cal-cell-empty' : ''}} {{item.future ? 'cal-cell-future' : ''}}"
+            data-key="{{item.key}}" bindtap="onDayTap"
+            aria-role="button" aria-label="{{item.key}}">
+        <block wx:if="{{!item.empty}}">
+          <text class="cal-day {{item.sel ? 'cal-day-sel' : ''}}">{{item.d}}</text>
+          <view wx:if="{{item.done || item.hasData}}"
+                class="cal-dot {{item.done ? 'cal-dot-done' : 'cal-dot-hollow'}}"></view>
+          <view wx:if="{{item.bad}}" class="cal-tri"></view>
+          <text wx:if="{{item.dose}}" class="cal-jab">💉</text>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- ④ 底部固定完成按钮（tab bar 之上） -->
+  <view class="footer-bar on-tab">
+    <view class="fb-bubble card-in" wx:if="{{feedbackStage === 'bubble'}}">
+      <view class="bubble-avatar" aria-hidden="true">✨</view>
+      <view class="bubble-ai fb-bubble-text">{{feedback}}</view>
+    </view>
+    <button class="{{checkin.completedAt ? 'btn-secondary' : 'btn-primary'}}" hover-class="btn-hover"
+            disabled="{{readOnly}}" bindtap="onComplete">
+      {{checkin.completedAt ? '已完成 ✓ 更新一下' : '完成打卡'}}
+    </button>
+  </view>
+
+  <!-- 蛋白「?」→ 底部弹出 1 份对照（05-DATA §5.2 PROTEIN_SERVING_EXAMPLES） -->
+  <view class="sheet-mask" wx:if="{{showSheet}}" bindtap="onSheetClose"></view>
+  <view class="sheet" wx:if="{{showSheet}}" catchtap="noop">
+    <view class="sheet-title">1 份蛋白 ≈ 20g，大概是这些</view>
+    <view class="sheet-item" wx:for="{{proteinExamples}}" wx:key="*this">
+      <text class="sheet-dot">·</text>
+      <text class="sheet-text">{{item}}</text>
+    </view>
+    <button class="btn-secondary sheet-btn" hover-class="btn-hover" bindtap="onSheetClose">知道了</button>
+  </view>
+</view>

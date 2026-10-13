@@ -1,0 +1,18 @@
+<!-- 自定义底部 Tab（docs/03-VISUAL.md §4.10） -->
+<view class="tab-bar">
+  <view
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    class="tab-item"
+    data-path="{{item.pagePath}}"
+    data-index="{{index}}"
+    bindtap="onTabTap"
+  >
+    <!-- 图标区：普通 tab 为 40rpx emoji；「小美」emoji 置于 64rpx 圆内（选中圆底 accent） -->
+    <view class="tab-icon-wrap {{item.ai ? 'tab-icon-ai' : ''}} {{item.ai && selected === index ? 'tab-icon-ai-on' : ''}}">
+      <text class="tab-icon {{selected === index ? 'tab-icon-on' : ''}}">{{item.icon}}</text>
+    </view>
+    <!-- 文字：未选中 text-3；普通 tab 选中 primary / 小美选中 accent-text -->
+    <text class="tab-text {{selected === index ? (item.ai ? 'tab-text-ai-on' : 'tab-text-on') : ''}}">{{item.text}}</text>
+  </view>
+</view>

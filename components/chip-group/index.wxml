@@ -1,0 +1,19 @@
+<!-- chip-group — 选项 chip（03-VISUAL §4.4）
+     mode: single 单选 / multi 多选 / tri 三态（轻→重→取消）
+     columns > 0 时用固定列数网格（lg 时 chip 撑满格子） -->
+<view class="cg-group {{size === 'lg' ? 'cg-lg' : ''}}" style="{{gridStyle}}">
+  <view
+    wx:for="{{items}}"
+    wx:key="idx"
+    class="cg-chip cg-{{item.state}} {{columns > 0 && size === 'lg' ? 'cg-fill' : ''}}"
+    hover-class="cg-press"
+    hover-start-time="0"
+    hover-stay-time="100"
+    data-idx="{{index}}"
+    bindtap="onTap"
+  >
+    <text class="cg-label">{{item.label}}</text>
+    <!-- tri「重」角标：28rpx 圆，danger 底；20rpx 字是规格允许的 <24rpx 例外 -->
+    <view wx:if="{{item.badge}}" class="cg-badge">重</view>
+  </view>
+</view>

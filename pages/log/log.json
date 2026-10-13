@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "记录",
+  "usingComponents": {
+    "chip-group": "/components/chip-group/index",
+    "cup-grid": "/components/cup-grid/index"
+  }
+}

@@ -1,0 +1,36 @@
+<!-- insight-card — 洞察卡（03-VISUAL §4.9；数据结构 docs/05-DATA §2.8）
+     左侧色条：priority ≥ 80 用 warning，其余 primary
+     按钮行：左「知道了」；右依次 cta（有才显示）与「✨ 问小美」 -->
+<view
+  wx:if="{{card}}"
+  class="icard {{card.priority >= 80 ? 'icard-warn' : ''}} {{closing ? 'icard-closing' : ''}}"
+>
+  <view class="icard-title">{{card.title}}</view>
+  <view class="icard-body">{{card.body}}</view>
+  <view class="icard-actions">
+    <view
+      class="icard-btn-text icard-dismiss"
+      hover-class="icard-press"
+      hover-start-time="0"
+      hover-stay-time="100"
+      bindtap="onDismiss"
+    >知道了</view>
+    <view class="icard-right">
+      <view
+        wx:if="{{card.cta && card.cta.label}}"
+        class="icard-btn-text icard-cta"
+        hover-class="icard-press"
+        hover-start-time="0"
+        hover-stay-time="100"
+        bindtap="onCta"
+      >{{card.cta.label}} ›</view>
+      <view
+        class="icard-ask"
+        hover-class="icard-press"
+        hover-start-time="0"
+        hover-stay-time="100"
+        bindtap="onAsk"
+      >✨ 问小美</view>
+    </view>
+  </view>
+</view>

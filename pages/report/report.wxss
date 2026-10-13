@@ -1,0 +1,96 @@
+/* pages/report — 就诊摘要（02-UX §3.9） */
+
+.report-range {
+  display: flex;
+  gap: 12rpx;
+  padding: var(--sp-3) 32rpx 0;
+}
+.seg-item {
+  flex: 1;
+  text-align: center;
+  padding: 12rpx 0;
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  border-radius: var(--r-md, 16rpx);
+  font-size: var(--fs-body-sm);
+}
+.seg-item-on {
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  font-weight: 500;
+}
+
+.report-card {
+  margin: var(--sp-3) 32rpx;
+  background: var(--c-surface);
+  border-radius: var(--r-lg, 24rpx);
+  padding: var(--sp-4);
+}
+.report-head {
+  border-bottom: 1rpx solid var(--c-border);
+  padding-bottom: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+.report-title {
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--c-text-1);
+  text-align: center;
+}
+.report-date {
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+  text-align: center;
+  margin-top: 4rpx;
+}
+
+.report-section {
+  margin-top: var(--sp-3);
+}
+.report-section-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--c-text-1);
+  margin-bottom: var(--sp-2);
+  border-left: 6rpx solid var(--c-primary);
+  padding-left: 12rpx;
+}
+.report-row {
+  display: flex;
+  padding: 8rpx 0;
+  border-bottom: 1rpx dashed var(--c-border);
+}
+.report-row:last-child { border-bottom: none; }
+.report-row-key {
+  width: 200rpx;
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-3);
+  flex-shrink: 0;
+}
+.report-row-val {
+  flex: 1;
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-1);
+}
+
+.report-q {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-1);
+  padding: 8rpx 0;
+  line-height: 1.6;
+}
+
+.report-foot {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+  text-align: right;
+}
+
+.report-actions {
+  padding: var(--sp-3) 32rpx calc(var(--sp-5) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  align-items: stretch;
+}

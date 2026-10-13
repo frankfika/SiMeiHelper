@@ -1,0 +1,80 @@
+<!-- pages/me — 我的（真相源：docs/02-UX.md §3.4；卡片/列表样式用全局类） -->
+<view class="page">
+
+  <!-- ① 档案头（无卡片）：🌱 大号 emoji + 昵称 + 档案小字（起始体重只读） -->
+  <view class="profile">
+    <view class="profile-avatar" aria-hidden="true">🌱</view>
+    <view
+      class="profile-name {{nickname ? '' : 'profile-name-empty'}}"
+      hover-class="card-hover"
+      bindtap="onEditNickname"
+      aria-role="button"
+    >{{nickname || '给自己起个名字'}}</view>
+    <view class="profile-meta" hover-class="card-hover" bindtap="onEditBody" aria-role="button">{{profileMeta}}</view>
+  </view>
+
+  <!-- ② 三格统计：已用药周数 / 累计 / 连续打卡 -->
+  <view class="card stats">
+    <view class="stat">
+      <view class="stat-value num">{{weekValue}}<text wx:if="{{weekUnit}}" class="stat-unit">{{weekUnit}}</text></view>
+      <view class="stat-label">已用药</view>
+    </view>
+    <view class="stat">
+      <view class="stat-value num">{{changeValue}}<text class="stat-unit">kg</text></view>
+      <view class="stat-label">累计</view>
+    </view>
+    <view class="stat">
+      <view class="stat-value num">{{streakValue}}<text class="stat-unit">天</text></view>
+      <view class="stat-label">连续打卡</view>
+    </view>
+  </view>
+
+  <!-- ③ 列表卡 1：方案 / 摘要 / 趋势 / 目标 -->
+  <view class="card me-list">
+    <view class="list-item" hover-class="card-hover" bindtap="onGoPlan" aria-role="button">
+      <text class="list-item-icon">💉</text>
+      <view class="list-item-text">用药方案</view>
+      <view class="list-item-extra">{{planExtra}}</view>
+      <text class="list-item-arrow">›</text>
+    </view>
+    <view class="list-item" hover-class="card-hover" bindtap="onGoReport" aria-role="button">
+      <text class="list-item-icon">📋</text>
+      <view class="list-item-text">就诊摘要</view>
+      <view class="list-item-extra">复诊时给医生看</view>
+      <text class="list-item-arrow">›</text>
+    </view>
+    <view class="list-item" hover-class="card-hover" bindtap="onGoTrend" aria-role="button">
+      <text class="list-item-icon">📈</text>
+      <view class="list-item-text">体重趋势</view>
+      <text class="list-item-arrow">›</text>
+    </view>
+    <view class="list-item" hover-class="card-hover" bindtap="onShowTargets" aria-role="button">
+      <text class="list-item-icon">🎯</text>
+      <view class="list-item-text">我的每日目标</view>
+      <view class="list-item-extra">{{targetsExtra}}</view>
+      <text class="list-item-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- ④ 列表卡 2：设置 / 免责声明 / 关于 -->
+  <view class="card me-list">
+    <view class="list-item" hover-class="card-hover" bindtap="onGoSettings" aria-role="button">
+      <text class="list-item-icon">⚙️</text>
+      <view class="list-item-text">设置</view>
+      <text class="list-item-arrow">›</text>
+    </view>
+    <view class="list-item" hover-class="card-hover" bindtap="onGoDisclaimer" aria-role="button">
+      <text class="list-item-icon">📄</text>
+      <view class="list-item-text">免责声明</view>
+      <text class="list-item-arrow">›</text>
+    </view>
+    <view class="list-item" hover-class="card-hover" bindtap="onAbout" aria-role="button">
+      <text class="list-item-icon">ℹ️</text>
+      <view class="list-item-text">关于司美助手</view>
+      <view class="list-item-extra">{{version}}</view>
+    </view>
+  </view>
+
+  <!-- ⑤ 页脚 -->
+  <view class="me-foot">你的数据只保存在这部手机里。</view>
+</view>

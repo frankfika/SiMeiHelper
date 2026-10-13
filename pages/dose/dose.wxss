@@ -1,0 +1,101 @@
+/* pages/dose — 记录注射（02-UX §3.5）；仅页面私有布局，颜色全用 CSS 变量 */
+
+.sec-title {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  margin: var(--sp-3) 0 var(--sp-2);
+}
+.sec-title:first-child {
+  margin-top: 0;
+}
+
+.dose-med-name {
+  font-size: var(--fs-h2);
+  color: var(--c-text-1);
+  font-weight: 600;
+  padding: var(--sp-2) 0;
+}
+
+.dose-time-row {
+  display: flex;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
+.dose-time-value {
+  background: var(--c-surface-2);
+  border-radius: var(--r-md, 16rpx);
+  padding: 16rpx 24rpx;
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.dose-site-sub {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  margin-bottom: var(--sp-3);
+}
+.dose-site-reco {
+  color: var(--c-primary);
+  font-weight: 600;
+  margin-left: 4rpx;
+}
+
+.dose-site-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12rpx;
+}
+
+.site {
+  position: relative;
+  background: var(--c-surface-2);
+  border-radius: var(--r-md, 16rpx);
+  padding: 20rpx 16rpx;
+  border: 2rpx solid transparent;
+  transition: background 120ms;
+}
+.site-name {
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+  font-weight: 500;
+}
+.site-last {
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+  margin-top: 4rpx;
+}
+.site-recommend {
+  border-color: var(--c-primary);
+}
+.site-recommend .site-name {
+  color: var(--c-primary);
+}
+.site-selected {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+}
+.site-selected .site-name,
+.site-selected .site-last {
+  color: var(--c-on-primary);
+}
+.site-badge {
+  position: absolute;
+  top: -10rpx;
+  right: -10rpx;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  font-size: 20rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 999rpx;
+}
+
+.dose-recent-item {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  padding: var(--sp-2) 0;
+  border-bottom: 1rpx solid var(--c-border);
+}
+.dose-recent-item:last-child {
+  border-bottom: none;
+}

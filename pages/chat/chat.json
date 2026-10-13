@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "小美",
+  "usingComponents": {
+    "chip-group": "/components/chip-group/index"
+  }
+}

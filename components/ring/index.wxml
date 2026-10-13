@@ -1,0 +1,17 @@
+<!-- ring — 体感浓度进度环（03-VISUAL §4.6）
+     canvas 只画轨道 + 进度弧；中心数字 / % / label 用 WXML 覆盖层（不画进 canvas） -->
+<view
+  class="ring-wrap"
+  style="width:{{size}}rpx;height:{{size}}rpx"
+  aria-role="img"
+  aria-label="{{ariaLabel}}"
+>
+  <canvas type="2d" id="ring-canvas" class="ring-canvas"></canvas>
+  <view class="ring-center">
+    <view class="ring-num-row">
+      <text class="ring-num num" style="font-size:{{numSize}}rpx">{{pctText}}</text>
+      <text wx:if="{{pctText !== '--'}}" class="ring-unit">%</text>
+    </view>
+    <text wx:if="{{label}}" class="ring-label">{{label}}</text>
+  </view>
+</view>

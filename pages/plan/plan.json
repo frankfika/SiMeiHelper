@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "用药方案",
+  "usingComponents": {
+    "chip-group": "/components/chip-group/index"
+  }
+}

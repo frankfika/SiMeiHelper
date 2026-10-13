@@ -1,0 +1,14 @@
+<!-- line-chart — 体重趋势折线图（03-VISUAL §4.7）
+     full：网格 / 轴标签 / 原始点 / 均线 / 面积 / 目标线 / markers / 点按 tooltip
+     mini：无轴无点，仅均线（点 <7 画原始折线）+ 面积，线宽 2px -->
+<view class="lc-wrap" style="height:{{height}}rpx">
+  <canvas type="2d" id="chart-canvas" class="lc-canvas" bindtap="onTap"></canvas>
+  <!-- 空数据：居中灰字（覆盖在 canvas 上方） -->
+  <view wx:if="{{empty}}" class="lc-empty">暂无数据</view>
+  <!-- 点按 tooltip 浮层（WXML 绘制，位置为 canvas 内 CSS 像素） -->
+  <view
+    wx:if="{{tip.show}}"
+    class="lc-tip"
+    style="left:{{tip.x}}px;top:{{tip.y}}px"
+  >{{tip.text}}</view>
+</view>

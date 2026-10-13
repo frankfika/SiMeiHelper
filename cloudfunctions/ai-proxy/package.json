@@ -1,0 +1,9 @@
+{
+  "name": "ai-proxy",
+  "version": "1.0.0",
+  "description": "云函数代理 — 把 AI 调用从用户手机移到云端，API Key 不再存于本地（合规 #1）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,636 @@
+/**
+ * 司美助手 SiMeiHelper — 全局样式
+ * 真相源：docs/03-VISUAL.md（§3 tokens / §4 组件规格 / §6 动效）
+ *
+ * 规则：
+ * 1. 十六进制色值只允许出现在下方 §3.8 token 定义处，其余一律引用 CSS 变量；
+ * 2. 全局类只在此文件定义，页面与组件（自定义 tab bar 除外）不得重复定义同名类；
+ * 3. 自定义组件样式隔离（isolated）：组件内拿不到这里的"类"，但能继承 page 上的
+ *    CSS 变量；组件需要的 @keyframes 需在组件自己的 wxss 里重定义。
+ */
+
+/* ========== 1. Design Tokens（03-VISUAL §3.8 骨架原样） ========== */
+page {
+  --c-primary:#1F7A6E; --c-primary-pressed:#17625A; --c-on-primary:#FFFFFF; --c-primary-soft:#E3F1EE;
+  --c-accent:#E8835A; --c-accent-text:#B4472C; --c-accent-soft:#FDF1EA;
+  --c-bg:#F6F4F0; --c-surface:#FFFFFF; --c-surface-2:#EFECE6; --c-border:#E4E0D8;
+  --c-text-1:#1C2624; --c-text-2:#5B6B70; --c-text-3:#6B7A7E; --c-placeholder:#9AA5A8;
+  --c-success:#2F855A; --c-success-soft:#E6F4EC; --c-warning:#B7791F; --c-warning-text:#8A5A0B; --c-warning-soft:#FFF4DE;
+  --c-danger:#D14343; --c-danger-soft:#FDECEC; --c-info:#2B6CB0; --c-info-soft:#E8F0FA; --c-mask:rgba(20,28,26,.45);
+  --fs-display:64rpx; --fs-h1:44rpx; --fs-h2:36rpx; --fs-h3:32rpx; --fs-body-lg:32rpx; --fs-body:30rpx; --fs-body-sm:28rpx; --fs-caption:24rpx;
+  --sp-1:8rpx; --sp-2:16rpx; --sp-3:24rpx; --sp-4:32rpx; --sp-5:48rpx; --sp-6:64rpx;
+  --r-sm:12rpx; --r-md:20rpx; --r-lg:32rpx; --r-pill:999rpx;
+  --shadow-card:0 2rpx 8rpx rgba(28,38,36,.04),0 8rpx 24rpx rgba(28,38,36,.06);
+  --shadow-float:0 8rpx 32rpx rgba(28,38,36,.12); --border-card:none;
+  --ai-gradient:linear-gradient(135deg,#FDF1EA 0%,#FFFFFF 62%);
+  background:var(--c-bg); color:var(--c-text-1); font-size:var(--fs-body); line-height:1.6;
+}
+@media (prefers-color-scheme: dark) {
+  page {
+    --c-primary:#4FBFAE; --c-primary-pressed:#3FA99A; --c-on-primary:#0E1F1C; --c-primary-soft:#18332F;
+    --c-accent:#F08C6A; --c-accent-text:#F4A487; --c-accent-soft:#33231C;
+    --c-bg:#121615; --c-surface:#1C2120; --c-surface-2:#252B2A; --c-border:#2E3534;
+    --c-text-1:#E6EDEB; --c-text-2:#A9B5B3; --c-text-3:#8C9997; --c-placeholder:#5F6B69;
+    --c-success:#5CC28A; --c-success-soft:#173225; --c-warning:#E0A84A; --c-warning-text:#F0C27A; --c-warning-soft:#33280F;
+    --c-danger:#F07171; --c-danger-soft:#3A1C1C; --c-info:#6AA6E0; --c-info-soft:#16263A; --c-mask:rgba(0,0,0,.6);
+    --shadow-card:none; --shadow-float:0 8rpx 32rpx rgba(0,0,0,.5); --border-card:1rpx solid #2E3534;
+    --ai-gradient:linear-gradient(135deg,#33231C 0%,#1C2120 62%);
+  }
+}
+
+/* ========== 2. 字体（03-VISUAL §3.2） ========== */
+page {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+/* 等宽数字：体重、份数、百分比等数字一律加 .num */
+.num {
+  font-variant-numeric: tabular-nums;
+  font-family: "DIN Alternate", -apple-system, "Helvetica Neue", sans-serif;
+}
+
+/* ========== 3. button 重置（03-VISUAL §4.2 首行） ========== */
+button {
+  margin: 0;
+  padding: 0;
+  line-height: inherit;
+  background: none;
+  font-size: inherit;
+}
+button::after {
+  border: none;
+}
+
+/* ========== 4. 页面容器（03-VISUAL §3.4） ========== */
+/* padding: 24 32 + 底部为自定义 tab bar 留空（160rpx + 安全区） */
+.page {
+  padding: 24rpx 32rpx calc(160rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+/* 二级页底部有固定按钮（.footer-bar 高约 128rpx + 安全区）时，改用此修饰类：
+   <view class="page page-footer"> */
+.page-footer {
+  padding-bottom: calc(176rpx + env(safe-area-inset-bottom));
+}
+
+/* ========== 5. 卡片三件套（03-VISUAL §4.1） ========== */
+.card {
+  background: var(--c-surface);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+  box-shadow: var(--shadow-card);
+  border: var(--border-card);
+  margin-bottom: var(--sp-3);
+}
+/* AI 专属卡：杏橙渐变（暗色 token 自动切换） */
+.card-ai {
+  background: var(--ai-gradient);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+  box-shadow: var(--shadow-card);
+  border: var(--border-card);
+  margin-bottom: var(--sp-3);
+}
+.card-flat {
+  background: var(--c-surface-2);
+  border-radius: var(--r-md);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+/* 卡片标签行：--fs-caption / 500 / text-3 */
+.card-label {
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  color: var(--c-text-3);
+  margin-bottom: var(--sp-2);
+}
+/* AI 卡标签：accent 文字 + ✨ 前缀（前缀由本类提供，页面不要再手写「✨」） */
+.card-ai .card-label {
+  color: var(--c-accent-text);
+}
+.card-ai .card-label::before {
+  content: '✨ ';
+  color: var(--c-accent);
+}
+/* 可点击整卡：hover-class="card-hover" */
+.card-hover {
+  opacity: .85;
+}
+/* 卡片进场（03-VISUAL §6）：opacity + translateY 16rpx，250ms ease-out；
+   用法：class="card card-in"。注意：自定义组件内需在本组件 wxss 重定义同名 keyframes */
+.card-in {
+  animation: card-in 250ms ease-out both;
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(16rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== 6. 按钮五件套（03-VISUAL §4.2） ========== */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 96rpx;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+}
+/* 默认通栏；需自适应宽度时组合 .btn-secondary.btn-inline */
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 88rpx;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-body);
+  font-weight: 500;
+}
+.btn-inline {
+  display: inline-flex;
+  width: auto;
+  padding: 0 var(--sp-4);
+}
+.btn-secondary-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 64rpx;
+  padding: 0 28rpx;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+}
+/* 视觉高 64rpx，上下内边距撑出 88rpx 热区 */
+.btn-text {
+  display: inline-flex;
+  align-items: center;
+  height: 64rpx;
+  padding: 12rpx 16rpx;
+  background: transparent;
+  color: var(--c-primary);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+}
+.btn-danger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 96rpx;
+  background: var(--c-danger);
+  /* 规格字面为 #FFFFFF；为遵守"wxss 禁写十六进制"改用语义变量
+     （浅色 = 白；暗色 = 深底文字，浅红底上对比更好） */
+  color: var(--c-on-primary);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+}
+/* 按下态：hover-class="btn-hover"。主按钮换背景色，其余降透明度（§4.2） */
+.btn-hover {
+  opacity: .7;
+}
+.btn-primary.btn-hover {
+  opacity: 1;
+  background: var(--c-primary-pressed);
+}
+/* 禁用：opacity .4 不改色（§4.2）。<button disabled> 自动命中；
+   view 类按钮手动加 .btn-disabled。下面几条用于压过小程序对 button[disabled]
+   的默认灰底样式，保持"只降透明度不改色" */
+.btn-primary[disabled],
+.btn-secondary[disabled],
+.btn-secondary-sm[disabled],
+.btn-text[disabled],
+.btn-danger[disabled],
+.btn-disabled {
+  opacity: .4;
+}
+.btn-primary[disabled] {
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+}
+.btn-secondary[disabled],
+.btn-secondary-sm[disabled] {
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+}
+.btn-text[disabled] {
+  background: transparent;
+  color: var(--c-primary);
+}
+.btn-danger[disabled] {
+  background: var(--c-danger);
+  color: var(--c-on-primary);
+}
+
+/* ========== 7. 底部固定按钮容器（03-VISUAL §4.2） ========== */
+.footer-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  padding: 16rpx 32rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: var(--c-bg);
+}
+/* tab 页内使用：抬到自定义 tab bar 之上，追加类 .footer-bar.on-tab */
+.footer-bar.on-tab {
+  bottom: calc(100rpx + env(safe-area-inset-bottom));
+  padding-bottom: 16rpx;
+}
+
+/* ========== 8. 表单行（03-VISUAL §4.3） ========== */
+.form-row {
+  min-height: 104rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--sp-4);
+  border-bottom: 1rpx solid var(--c-border);
+}
+/* 独立使用自带左右内边距；放进卡片内则贴边 */
+.card .form-row,
+.card-ai .form-row,
+.card-flat .form-row {
+  padding-left: 0;
+  padding-right: 0;
+}
+.form-row:last-child {
+  border-bottom: none;
+}
+.form-row-title {
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+/* 标题旁的「?」说明图标（36rpx 圆，surface-2 底，text-2 字） */
+.form-row-help {
+  width: 36rpx;
+  height: 36rpx;
+  margin-left: var(--sp-1);
+  border-radius: 50%;
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  font-size: var(--fs-caption);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.form-row-right {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+/* 右侧文本输入 / 值：text-align right */
+.form-row-value {
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+  text-align: right;
+}
+/* 单位紧随其后 */
+.form-row-unit {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-3);
+  margin-left: var(--sp-1);
+}
+/* 输入占位符：placeholder-class="ph"（§4.3） */
+.ph {
+  color: var(--c-placeholder);
+}
+/* 错误行：置于 .form-row 之后，--fs-caption / danger（§4.3） */
+.form-error {
+  font-size: var(--fs-caption);
+  color: var(--c-danger);
+  padding-bottom: var(--sp-2);
+}
+/* 独立输入框（onboarding，§4.3）；聚焦时页面切换加 .input-box-focus */
+.input-box {
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 28rpx;
+  background: var(--c-surface-2);
+  border-radius: var(--r-md);
+}
+.input-box-focus {
+  box-shadow: 0 0 0 4rpx var(--c-primary-soft);
+}
+
+/* ========== 9. 小件（03-VISUAL §4.11） ========== */
+/* 阶段 pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  height: 52rpx;
+  padding: 0 20rpx;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+}
+/* 分段控件：选中项加 .segmented-item-on */
+.segmented {
+  display: flex;
+  align-items: center;
+  height: 72rpx;
+  padding: 4rpx;
+  box-sizing: border-box;
+  background: var(--c-surface-2);
+  border-radius: var(--r-md);
+}
+.segmented-item {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  border-radius: calc(var(--r-md) - 4rpx);
+}
+.segmented-item-on {
+  background: var(--c-surface);
+  color: var(--c-text-1);
+  font-weight: 500;
+  box-shadow: var(--shadow-card);
+}
+/* 提示条：🌿 前缀由本类提供，页面不要再手写 emoji */
+.banner-warning {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--sp-3);
+  background: var(--c-warning-soft);
+  border-radius: var(--r-md);
+  font-size: var(--fs-body-sm);
+  color: var(--c-warning-text);
+}
+.banner-warning::before {
+  content: '🌿';
+  margin-right: var(--sp-2);
+}
+/* 说明块：ℹ️ 前缀由本类提供 */
+.notice {
+  padding: var(--sp-3);
+  background: var(--c-info-soft);
+  border-radius: var(--r-md);
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+}
+.notice::before {
+  content: 'ℹ️';
+  margin-right: var(--sp-2);
+}
+/* 列表项：左 icon + 文字 + 右灰字（+ 箭头） */
+.list-item {
+  min-height: 104rpx;
+  display: flex;
+  align-items: center;
+}
+.list-item-icon {
+  font-size: 36rpx;
+  margin-right: var(--sp-2);
+}
+.list-item-text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+.list-item-extra {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-3);
+}
+.list-item-arrow {
+  margin-left: var(--sp-1);
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-3);
+}
+/* 空态：emoji 80rpx → 文案 → 可选按钮 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sp-6) 0;
+  text-align: center;
+}
+.empty-icon {
+  font-size: 80rpx;
+  line-height: 1;
+}
+.empty-text {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-body);
+  color: var(--c-text-2);
+}
+.empty-action {
+  margin-top: var(--sp-3);
+}
+/* 注射部位格子：.site + 状态类 .site-recommend / .site-selected */
+.site {
+  position: relative;
+  height: 112rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-surface-2);
+  border-radius: var(--r-md);
+  box-sizing: border-box;
+}
+.site-name {
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: var(--c-text-1);
+}
+.site-date {
+  margin-top: 4rpx;
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+/* 推荐态：primary 描边 + 右上「推荐」角标（20rpx 为规格允许的例外字号，同 chip 角标） */
+.site-recommend {
+  border: 2rpx solid var(--c-primary);
+}
+.site-recommend::after {
+  content: '推荐';
+  position: absolute;
+  top: -14rpx;
+  right: 12rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  padding: 0 12rpx;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  border-radius: var(--r-pill);
+  font-size: 20rpx;
+}
+/* 选中态 */
+.site-selected {
+  background: var(--c-primary);
+}
+.site-selected .site-name,
+.site-selected .site-date {
+  color: var(--c-on-primary);
+}
+/* 安全常驻条：吸顶单行省略（§5.3 小美页） */
+.safety-strip {
+  height: 64rpx;
+  line-height: 64rpx;
+  padding: 0 var(--sp-3);
+  background: var(--c-surface-2);
+  font-size: var(--fs-caption);
+  color: var(--c-text-2);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 体重区间条：surface-2 轨道 + .range-bar-seg 区间段（左右用 style 定位）
+   + .range-bar-dot 当前点（left 用 style 定位） */
+.range-bar {
+  position: relative;
+  height: 16rpx;
+  background: var(--c-surface-2);
+  border-radius: var(--r-pill);
+}
+.range-bar-seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--c-primary-soft);
+  border-radius: var(--r-pill);
+}
+.range-bar-dot {
+  position: absolute;
+  top: 50%;
+  width: 24rpx;
+  height: 24rpx;
+  box-sizing: content-box;
+  /* 规格为白色 4rpx 描边；浅色下 surface 即 #FFFFFF，暗色用卡底色更协调 */
+  border: 4rpx solid var(--c-surface);
+  background: var(--c-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ========== 10. AI 对话气泡（03-VISUAL §4.8） ========== */
+/* 消息行：AI = 头像 + 内容列（.bubble-col）；用户 = 右对齐 */
+.bubble-row {
+  display: flex;
+  align-items: flex-start;
+}
+.bubble-row-user {
+  justify-content: flex-end;
+}
+/* 小美头像：48rpx 圆，accent-soft 底，✨ 居中 */
+.bubble-avatar {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: var(--sp-2);
+  border-radius: 50%;
+  background: var(--c-accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+/* 头像右侧的内容列：气泡 + actions + 来源小字 */
+.bubble-col {
+  flex: 1;
+  min-width: 0;
+}
+.bubble-user {
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  border-radius: 32rpx 32rpx 8rpx 32rpx;
+  padding: 20rpx 28rpx;
+  max-width: 78%;
+  box-sizing: border-box;
+  font-size: var(--fs-body-lg);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.bubble-ai {
+  background: var(--c-surface);
+  color: var(--c-text-1);
+  border-radius: 32rpx 32rpx 32rpx 8rpx;
+  padding: 24rpx 28rpx;
+  max-width: 82%;
+  box-sizing: border-box;
+  font-size: var(--fs-body-lg);
+  box-shadow: var(--shadow-card);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+/* 急症卡：全宽、左侧 danger 色条 */
+.bubble-safety {
+  background: var(--c-danger-soft);
+  color: var(--c-text-1);
+  border-radius: var(--r-lg);
+  border-left: 8rpx solid var(--c-danger);
+  padding: var(--sp-4);
+  width: 100%;
+  box-sizing: border-box;
+  font-size: var(--fs-body-lg);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+/* 急症卡首行「⚠️ …」600（§4.8） */
+.bubble-safety-title {
+  font-weight: 600;
+}
+/* 急症卡内「拨打 120」：btn-danger 高 80rpx（§4.8） */
+.bubble-safety .btn-danger {
+  height: 80rpx;
+  margin-top: var(--sp-3);
+}
+/* actions 行：气泡下方 btn-secondary-sm 换行排列（§4.8）；
+   横向对齐"头像右侧"由页面把 actions 放进 .bubble-col 实现 */
+.bubble-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+/* 来源小字（「离线回答」等）：气泡下方 */
+.bubble-source {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+/* 打字中：三个 12rpx 圆点，opacity .3→1 依次循环 900ms（§4.8 / §6） */
+.bubble-typing {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 0;
+}
+.bubble-typing-dot {
+  width: 12rpx;
+  height: 12rpx;
+  margin-right: 8rpx;
+  border-radius: 50%;
+  background: var(--c-text-3);
+  opacity: .3;
+  animation: typing-dot 900ms infinite;
+}
+.bubble-typing-dot:nth-child(2) {
+  animation-delay: 300ms;
+}
+.bubble-typing-dot:nth-child(3) {
+  animation-delay: 600ms;
+}
+@keyframes typing-dot {
+  0% { opacity: .3; }
+  40% { opacity: 1; }
+  80%, 100% { opacity: .3; }
+}

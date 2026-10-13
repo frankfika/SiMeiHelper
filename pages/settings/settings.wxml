@@ -1,0 +1,79 @@
+<view class="page">
+  <!-- AI 服务 -->
+  <view class="card">
+    <view class="card-label">回答方式</view>
+    <chip-group options="{{providerOptions}}" value="{{provider}}" mode="single" size="md" bind:change="onPickProvider" />
+
+    <view wx:if="{{showCloudForm}}" class="settings-api">
+      <view class="form-row">
+        <view class="form-row-title">模型</view>
+        <view class="form-row-value"><chip-group options="{{cloudProxyModels}}" value="{{model}}" mode="single" size="sm" columns="1" bind:change="onPickCloudModel" /></view>
+      </view>
+      <button class="btn-secondary-sm btn-inline" bindtap="onTest">测试连接</button>
+      <view wx:if="{{testResult}}" class="settings-test {{testColor}}">{{testResult}}</view>
+      <view class="form-row-help">
+        云函数代理（合规 #1）：你的 API Key 存放在云端，不在本机。问题与资料摘要通过云函数转发给你选择的服务商。
+      </view>
+    </view>
+
+    <view wx:if="{{showApiForm}}" class="settings-api">
+      <view class="form-row">
+        <view class="form-row-title">Base URL</view>
+        <view class="form-row-value"><input placeholder="https://api.deepseek.com/v1" value="{{baseUrl}}" bindinput="onBaseUrl" /></view>
+      </view>
+      <view class="form-row">
+        <view class="form-row-title">模型名</view>
+        <view class="form-row-value"><input placeholder="deepseek-chat" value="{{model}}" bindinput="onModel" /></view>
+      </view>
+      <view class="form-row">
+        <view class="form-row-title">API Key</view>
+        <view class="form-row-value"><input placeholder="sk-..." password="{{true}}" value="{{apiKey}}" bindinput="onApiKey" /></view>
+        <view wx:if="{{apiKeyDisplay}}" class="form-row-help">{{apiKeyDisplay}}</view>
+      </view>
+      <button class="btn-secondary-sm btn-inline" bindtap="onTest">测试连接</button>
+      <view wx:if="{{testResult}}" class="settings-test {{testColor}}">{{testResult}}</view>
+      <view class="form-row-help">
+        ⚠️ 自填 Key 模式（仅供高级用户 / 开发调试）：Key 只保存在这部手机上，正式版本请用云函数代理。开启后，你的问题和记录摘要会发送给该服务商。
+      </view>
+    </view>
+  </view>
+
+  <!-- 提醒 -->
+  <view class="card">
+    <view class="form-row">
+      <view class="form-row-title">每晚打卡提醒</view>
+      <view class="form-row-value">
+        <switch checked="{{reminders.dailyCheckin}}" bindchange="onToggleDailyCheckin" />
+      </view>
+    </view>
+    <view class="form-row-help">每晚 21:00 提醒一次（需手机日历权限）</view>
+  </view>
+
+  <!-- 数据 -->
+  <view class="card">
+    <view class="list-item" bindtap="onExport">
+      <view class="list-item-text">导出我的数据</view>
+      <view class="list-item-arrow">›</view>
+    </view>
+    <view class="list-item" bindtap="onClearChat">
+      <view class="list-item-text">清空对话记录</view>
+      <view class="list-item-arrow">›</view>
+    </view>
+    <view class="list-item list-item-danger" bindtap="onClearAll">
+      <view class="list-item-text" style="color: var(--c-danger);">清空所有数据</view>
+      <view class="list-item-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <view class="card">
+    <view class="form-row">
+      <view class="form-row-title">版本</view>
+      <view class="form-row-value">v1.0.0</view>
+    </view>
+    <view class="list-item" bindtap="onGoDisclaimer">
+      <view class="list-item-text">免责声明</view>
+      <view class="list-item-arrow">›</view>
+    </view>
+  </view>
+</view>

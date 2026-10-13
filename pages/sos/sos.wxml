@@ -1,0 +1,46 @@
+<!-- pages/sos — 身体很不舒服（02-UX §3.10 / 05-DATA §6.1） -->
+<view class="page">
+
+  <!-- 急症卡：任一红旗点「有」立即出现（§3.10.3，bubble-safety 样式） -->
+  <view class="sos-alert" wx:if="{{emergency}}">
+    <view class="bubble-safety">
+      <view class="bubble-safety-title">⚠️ 这种情况请尽快去医院</view>
+      <view class="sos-alert-text">{{emergency.text}}</view>
+      <button class="btn-danger" hover-class="btn-hover" bindtap="call120">拨打 120</button>
+      <button class="btn-secondary sos-alert-btn" hover-class="btn-hover" bindtap="goReport">看就诊摘要（给医生看）</button>
+    </view>
+  </view>
+
+  <!-- ① 顶部说明（§3.10.1） -->
+  <view class="sos-intro">先别慌。看看下面有没有这些情况：</view>
+
+  <!-- ② 红旗清单：7 行，每行描述 + 「有 / 没有」（§3.10.2） -->
+  <view class="card">
+    <view class="sos-row" wx:for="{{flags}}" wx:key="id">
+      <view class="sos-row-text">{{item.text}}</view>
+      <view class="sos-row-btns">
+        <view class="sos-chip {{item.answer === 'yes' ? 'sos-chip-yes' : ''}}"
+              hover-class="btn-hover" data-idx="{{index}}" data-val="yes" bindtap="onFlag"
+              aria-role="button" aria-label="有：{{item.text}}">有</view>
+        <view class="sos-chip {{item.answer === 'no' ? 'sos-chip-no' : ''}}"
+              hover-class="btn-hover" data-idx="{{index}}" data-val="no" bindtap="onFlag"
+              aria-role="button" aria-label="没有：{{item.text}}">没有</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ③ 全部标「没有」：常见反应缓解卡（§3.10.4） -->
+  <view class="card" wx:if="{{showRelief}}">
+    <view class="relief-title">还好，大概率是常见反应 🌿</view>
+    <view class="relief-group" wx:for="{{relief}}" wx:for-item="g" wx:key="key">
+      <view class="relief-label">{{g.label}}</view>
+      <view class="kb-li" wx:for="{{g.items}}" wx:for-item="line" wx:key="key">{{line.t}}</view>
+    </view>
+    <view class="relief-foot">这些只是缓解不适的办法。如果症状变重、超过 1–2 天不见好，或者上面任何一条变成「有」，请去看医生。</view>
+    <button class="btn-secondary relief-btn" hover-class="btn-hover" bindtap="goLog">记到今天打卡</button>
+    <button class="btn-secondary relief-btn" hover-class="btn-hover" bindtap="askMe">问小美</button>
+  </view>
+
+  <!-- ④ 页面底部固定小字（§3.10.5） -->
+  <view class="sos-foot">拿不准的时候，宁可去一趟医院。</view>
+</view>

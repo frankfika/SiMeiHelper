@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/today/today",
+    "pages/log/log",
+    "pages/chat/chat",
+    "pages/me/me",
+    "pages/onboarding/onboarding",
+    "pages/dose/dose",
+    "pages/trend/trend",
+    "pages/plan/plan",
+    "pages/article/article",
+    "pages/report/report",
+    "pages/sos/sos",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarTitleText": "司美助手",
+    "navigationBarBackgroundColor": "@navBg",
+    "navigationBarTextStyle": "@navText",
+    "backgroundColor": "@pageBg",
+    "backgroundTextStyle": "@bgText"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "@tabColor",
+    "selectedColor": "@tabSelected",
+    "backgroundColor": "@tabBg",
+    "list": [
+      { "pagePath": "pages/today/today", "text": "今天" },
+      { "pagePath": "pages/log/log", "text": "记录" },
+      { "pagePath": "pages/chat/chat", "text": "小美" },
+      { "pagePath": "pages/me/me", "text": "我的" }
+    ]
+  },
+  "darkmode": true,
+  "themeLocation": "theme.json",
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

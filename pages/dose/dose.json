@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "记录注射",
+  "usingComponents": {
+    "chip-group": "/components/chip-group/index"
+  }
+}

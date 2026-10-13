@@ -1,0 +1,75 @@
+/* pages/trend/trend.wxss — 体重趋势页样式（颜色一律走全局 CSS 变量） */
+
+.seg-wrap {
+  margin-bottom: var(--sp-3);
+}
+
+/* 统计 2×2 */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3) var(--sp-4);
+}
+.stat-label {
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+.stat-value {
+  margin-top: 4rpx;
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  color: var(--c-text-1);
+  line-height: 1.2;
+}
+.stat-unit {
+  margin-left: 4rpx;
+  font-size: var(--fs-body-sm);
+  font-weight: 400;
+  color: var(--c-text-3);
+}
+.stat-sub {
+  margin-top: 2rpx;
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+.stat-band {
+  margin-top: 2rpx;
+  font-size: var(--fs-caption);
+  font-weight: 500;
+}
+
+/* 速度分档着色（05-DATA §5.3：灰 / 绿 / 中性 / 黄；颜色 + 文字双通道） */
+.rate-flat .stat-value,
+.rate-flat .stat-band {
+  color: var(--c-text-3);
+}
+.rate-steady .stat-value,
+.rate-steady .stat-band {
+  color: var(--c-success);
+}
+.rate-fastish .stat-value,
+.rate-fastish .stat-band {
+  color: var(--c-text-1);
+}
+.rate-fast .stat-value,
+.rate-fast .stat-band {
+  color: var(--c-warning-text);
+}
+
+/* 解读卡 */
+.ai-text {
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+.ai-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--sp-1);
+}
+
+/* 页底文字按钮 */
+.trend-footer {
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-2) 0 var(--sp-4);
+}

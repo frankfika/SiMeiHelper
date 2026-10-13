@@ -1,0 +1,34 @@
+<!-- cup-grid — 打卡格子（喝水 / 蛋白，0.5 步进，03-VISUAL §4.5）
+     底部自带计数行：icon 为 💧 时单位「杯」，否则「份」；达标 success + ✓ -->
+<view class="cup-wrap">
+  <!-- 跨过目标瞬间整组 scale(1.04) 回弹 200ms -->
+  <view class="cup-rows {{pop ? 'cup-pop' : ''}}">
+    <view
+      class="cup-row"
+      wx:for="{{rows}}"
+      wx:for-item="row"
+      wx:key="ri"
+    >
+      <view
+        wx:for="{{row.cells}}"
+        wx:for-item="cell"
+        wx:key="i"
+        class="cup-cell cup-{{cell.state}}"
+        hover-class="cup-press"
+        hover-start-time="0"
+        hover-stay-time="80"
+        data-i="{{cell.i}}"
+        data-state="{{cell.state}}"
+        bindtap="onTap"
+      >
+        <text wx:if="{{cell.state === 'plus'}}" class="cup-plus-sign">＋</text>
+        <text wx:else class="cup-icon">{{icon}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="cup-count {{reached ? 'cup-reached' : ''}}">
+    <text class="num">{{countText}}</text>
+    <text> {{unit}}</text>
+    <text wx:if="{{reached}}"> ✓</text>
+  </view>
+</view>

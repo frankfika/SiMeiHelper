@@ -1,0 +1,8 @@
+{
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "ring": "/components/ring/index",
+    "line-chart": "/components/line-chart/index",
+    "insight-card": "/components/insight-card/index"
+  }
+}

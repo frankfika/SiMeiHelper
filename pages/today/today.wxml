@@ -1,0 +1,147 @@
+<!-- pages/today — 今天页（02-UX §3.1 / 03-VISUAL §5.1） -->
+<view class="page">
+
+  <!-- 难受模式顶部条（§6.2） -->
+  <view wx:if="{{badDay}}" class="banner-warning bad-banner">
+    <text class="bad-banner-text">身体很不舒服？</text>
+    <view class="bad-banner-actions">
+      <text class="bad-banner-link" hover-class="btn-hover" bindtap="goSos">看看 ›</text>
+      <text class="bad-banner-link" hover-class="btn-hover" bindtap="imBetter">我好多了</text>
+    </view>
+  </view>
+
+  <!-- ① 问候行 -->
+  <view class="hello">
+    <view class="hello-main">
+      <view class="hello-greet">{{greeting}}</view>
+      <view class="hello-date">{{dateText}}</view>
+    </view>
+    <view class="pill" hover-class="card-hover" bindtap="onStagePillTap" aria-role="button">{{stagePill}}</view>
+  </view>
+
+  <!-- ② AI 今日简报卡 -->
+  <view class="card-ai" wx:if="{{brief}}">
+    <view class="brief-head">
+      <view class="card-label">小美今日简报</view>
+      <view class="brief-source" wx:if="{{!briefLoading}}">{{brief.source}}</view>
+      <view class="brief-thinking" wx:else>
+        <view class="bubble-typing">
+          <view class="bubble-typing-dot"></view>
+          <view class="bubble-typing-dot"></view>
+          <view class="bubble-typing-dot"></view>
+        </view>
+        <text class="brief-thinking-text">小美在想…</text>
+      </view>
+    </view>
+    <view class="brief-body {{briefFlash ? 'brief-flash' : ''}}">
+      <view class="brief-headline">{{brief.headline}}</view>
+      <view class="brief-tasks">
+        <view class="brief-task" wx:for="{{brief.tasks}}" wx:key="key"
+              hover-class="card-hover" data-key="{{item.key}}" bindtap="onTaskTap"
+              aria-role="button" aria-label="{{item.text}}">
+          <view class="brief-task-circle {{item.done ? 'brief-task-done' : ''}}">{{item.done ? '✓' : ''}}</view>
+          <view class="brief-task-text {{item.done ? 'brief-task-text-done' : ''}}">{{item.text}}</view>
+          <view class="brief-task-progress num" wx:if="{{item.progress}}">{{item.progress}}</view>
+        </view>
+      </view>
+      <view class="brief-note" wx:if="{{brief.note}}">{{brief.note}}</view>
+    </view>
+    <view class="brief-ask-row">
+      <text class="btn-text" hover-class="btn-hover" bindtap="onBriefAsk">问问小美 ›</text>
+    </view>
+  </view>
+
+  <!-- ③ 药物状态卡（active 形态） -->
+  <view class="card med-card {{medHighlight ? 'med-highlight' : ''}}" wx:if="{{medView === 'active'}}">
+    <view class="med-main">
+      <view class="med-ring" aria-role="img" aria-label="体感浓度 {{felt}}%">
+        <ring value="{{felt}}" size="160" stroke="14" color="primary" label="体感浓度" />
+      </view>
+      <view class="med-info">
+        <view class="med-title">{{medTitle}}</view>
+        <block wx:if="{{hasDoses}}">
+          <view class="med-phase">
+            <text class="pill med-phase-pill">{{phaseLabel}}</text>
+            <text class="med-hint">{{phaseHint}}</text>
+          </view>
+          <view class="med-next {{nextDoseWarn ? 'med-next-warn' : ''}} {{isDoseDay ? 'med-next-today' : ''}}">{{nextDoseText}}</view>
+          <view class="med-switch-note" wx:if="{{switchNote}}">刚换药，前几周数值偏低是正常的</view>
+        </block>
+        <view wx:else class="med-hint med-hint-empty">记录第一针后，这里会显示药物在你身体里的变化</view>
+      </view>
+    </view>
+    <button wx:if="{{!hasDoses || isDoseDay || nextDoseWarn}}" class="btn-primary med-btn"
+            hover-class="btn-hover" bindtap="goDose">{{hasDoses ? '记录这一针' : '记录第一针'}}</button>
+    <view wx:else class="med-link">
+      <text class="btn-text" hover-class="btn-hover" bindtap="goDose">记录注射 ›</text>
+    </view>
+    <view class="med-foot">曲线按说明书参数估算，只是示意，不是血药检测结果。</view>
+  </view>
+
+  <!-- ③ 药物状态卡（explore / prescribed 形态：开始前清单） -->
+  <view class="card" wx:elif="{{medView === 'explore' || medView === 'prescribed'}}">
+    <view class="card-label">开始之前</view>
+    <view class="ck-item" wx:for="{{checklist}}" wx:key="id"
+          hover-class="card-hover" data-id="{{item.id}}" bindtap="onChecklistTap">
+      <view class="ck-circle {{item.read ? 'ck-done' : ''}}">{{item.read ? '✓' : ''}}</view>
+      <view class="ck-text">{{item.text}}</view>
+    </view>
+    <button wx:if="{{medView === 'prescribed'}}" class="btn-primary med-btn"
+            hover-class="btn-hover" bindtap="goFirstShot">我打了第一针</button>
+    <view class="med-link">
+      <text class="btn-text" hover-class="btn-hover" bindtap="goPlan">已经开始用药了？更新用药方案 ›</text>
+    </view>
+  </view>
+
+  <!-- ③ 药物状态卡（maintain 形态：体重守护区间） -->
+  <view class="card" wx:elif="{{medView === 'maintain'}}">
+    <view class="card-label">体重守护区间</view>
+    <block wx:if="{{maintain}}">
+      <view class="maintain-current num">当前 {{maintain.currentKg}} kg</view>
+      <view class="range-bar maintain-bar">
+        <view class="range-bar-seg" style="left:{{maintain.segLeft}}%;width:{{maintain.segWidth}}%"></view>
+        <view class="range-bar-dot" style="left:{{maintain.dotPct}}%"></view>
+      </view>
+      <view class="maintain-text">{{maintain.text}}</view>
+    </block>
+    <view class="med-link">
+      <text class="btn-text" hover-class="btn-hover" bindtap="goLogWeight">记录今天体重 ›</text>
+    </view>
+  </view>
+
+  <!-- ④ 洞察卡区（0–2 张，无卡不渲染） -->
+  <block wx:if="{{insights.length}}">
+    <insight-card wx:for="{{insights}}" wx:key="key" card="{{item}}"
+                  bind:dismiss="onInsightDismiss" bind:ask="onInsightAsk" bind:cta="onInsightCta" />
+  </block>
+
+  <!-- ⑤ 体重小卡 -->
+  <view class="card weight-card" wx:if="{{weightView}}" hover-class="card-hover" bindtap="goTrend">
+    <view class="weight-left">
+      <view class="card-label">体重</view>
+      <view class="weight-num">
+        <text class="num weight-big">{{weightView.latestKg}}</text>
+        <text class="weight-unit">kg</text>
+      </view>
+      <view class="weight-change" wx:if="{{weightView.changeText}}">{{weightView.changeText}}</view>
+    </view>
+    <view class="weight-right">
+      <view class="weight-hint" wx:if="{{weightView.notWeighed}}">本周还没称哦</view>
+      <view class="weight-chart" wx:if="{{weightView.chart}}">
+        <line-chart points="{{weightView.points}}" mode="mini" height="80" />
+      </view>
+    </view>
+  </view>
+
+  <!-- ⑥ 阶段指南卡 -->
+  <view class="card" wx:if="{{guideCard}}" hover-class="card-hover" bindtap="goGuide">
+    <view class="card-label">{{guideCard.label}}</view>
+    <view class="guide-row">
+      <view class="guide-title">{{guideCard.title}}</view>
+      <view class="guide-extra">{{guideCard.read ? '再看一遍' : guideCard.minutes + ' 分钟读完'}} ›</view>
+    </view>
+  </view>
+
+  <!-- ⑦ 页脚 -->
+  <view class="today-foot">小美是 AI 陪伴助手，不能代替医生。</view>
+</view>

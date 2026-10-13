@@ -1,0 +1,27 @@
+{
+  "name": "simei-helper",
+  "version": "1.0.0",
+  "private": true,
+  "description": "司美助手 SiMeiHelper — 微信原生小程序（GLP-1 减重全周期陪伴）。极简 + AI native。零 npm 依赖，所有测试通过 node 直跑。",
+  "scripts": {
+    "test": "node tools/run-all.js",
+    "test:audit": "npm audit --omit=dev --audit-level=high",
+    "check": "node tools/check.js",
+    "simulator": "node tools/simulator.js",
+    "ci": "node tools/run-all.js"
+  },
+  "keywords": [
+    "miniprogram",
+    "wechat",
+    "glp1",
+    "semaglutide",
+    "tirzepatide",
+    "weight-loss",
+    "health",
+    "ai-companion"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

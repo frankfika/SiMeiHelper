@@ -1,0 +1,16 @@
+/* pages/settings — 设置（02-UX §3.11） */
+
+.settings-api {
+  margin-top: var(--sp-3);
+}
+
+.settings-test {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-body-sm);
+}
+.settings-test.success { color: var(--c-success); }
+.settings-test.danger { color: var(--c-danger); }
+
+.list-item-danger .list-item-text {
+  color: var(--c-danger);
+}

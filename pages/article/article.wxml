@@ -1,0 +1,36 @@
+<!-- pages/article — 知识卡阅读页（02-UX §3.8） -->
+<view class="page">
+
+  <!-- 空态：id 未命中（§3.8，找不到卡） -->
+  <view class="empty" wx:if="{{notFound}}">
+    <view class="empty-icon">🌿</view>
+    <view class="empty-text">内容走丢了</view>
+    <view class="empty-action">
+      <view class="btn-secondary btn-inline" hover-class="btn-hover" bindtap="goBack">返回</view>
+    </view>
+  </view>
+
+  <block wx:else>
+    <!-- ① 标题 + 阅读时长（§3.8.1） -->
+    <view class="art-title">{{title}}</view>
+    <view class="art-meta">{{minutes}} 分钟读完</view>
+
+    <!-- ② 正文：sections 循环，小标题 + 圆点条目（§3.8.2） -->
+    <view class="card art-body">
+      <block wx:for="{{sections}}" wx:for-item="sec" wx:key="h">
+        <view class="art-h">{{sec.h}}</view>
+        <view class="kb-li" wx:for="{{sec.items}}" wx:for-item="line" wx:key="key">{{line.t}}</view>
+      </block>
+    </view>
+
+    <!-- ③ 涉及剂量的篇目：正文末 notice（§3.8.3） -->
+    <view class="notice art-notice" wx:if="{{showNotice}}">具体剂量和节奏，以你的处方医生为准。</view>
+
+    <!-- ④ 底部问小美（§3.8.4） -->
+    <view class="card-ai art-ask">
+      <view class="card-label">还有疑问？</view>
+      <view class="art-ask-text">把你的情况说给小美听，她会结合你的记录来回答。</view>
+      <button class="btn-secondary art-ask-btn" hover-class="btn-hover" bindtap="askXiaomei">问小美</button>
+    </view>
+  </block>
+</view>

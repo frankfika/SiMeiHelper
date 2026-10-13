@@ -1,0 +1,91 @@
+/* insight-card — 洞察卡（03-VISUAL §4.9）
+   组件内自绘卡片（.card / .btn-text / .btn-secondary-sm 全局类不可用），只用 CSS 变量 */
+.icard {
+  box-sizing: border-box;
+  background: var(--c-surface);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+  margin-bottom: var(--sp-3);
+  box-shadow: var(--shadow-card);
+  border: var(--border-card);
+  /* 左侧 8rpx 色条（默认 primary；圆角保留） */
+  border-left: 8rpx solid var(--c-primary);
+  /* 进场：opacity 0→1、translateY 16rpx→0，250ms ease-out */
+  animation: icardIn 250ms ease-out both;
+  /* 关闭收起过渡（配合 .icard-closing） */
+  transition: opacity 200ms ease-out, transform 200ms ease-out, margin-bottom 200ms ease-out;
+}
+/* priority ≥ 80：warning 色条 */
+.icard-warn {
+  border-left-color: var(--c-warning);
+}
+/* 进场动画 */
+@keyframes icardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* 关闭：透明度/位移收起 200ms，动画结束后组件抛 dismiss、页面移除节点 */
+.icard-closing {
+  opacity: 0;
+  transform: translateY(-16rpx);
+  margin-bottom: 0;
+}
+.icard-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--c-text-1);
+}
+.icard-body {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--c-text-2);
+}
+.icard-actions {
+  margin-top: var(--sp-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.icard-right {
+  display: flex;
+  align-items: center;
+}
+/* 自绘 btn-text（视觉 64rpx，内边距撑热区）；「知道了」用 text-3 色 */
+.icard-btn-text {
+  display: inline-flex;
+  align-items: center;
+  height: 64rpx;
+  padding: 12rpx 16rpx;
+  background: transparent;
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  color: var(--c-text-3);
+}
+.icard-cta {
+  color: var(--c-primary);
+}
+/* 自绘 btn-secondary-sm：「✨ 问小美」 */
+.icard-ask {
+  display: inline-flex;
+  align-items: center;
+  height: 64rpx;
+  padding: 0 28rpx;
+  margin-left: var(--sp-1);
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+}
+/* 按下反馈 */
+.icard-press {
+  opacity: 0.7;
+}

@@ -1,0 +1,149 @@
+<!-- pages/chat — 小美（03-VISUAL §5.3 逐屏；气泡规格 §4.8 全局类直接用） -->
+<view class="page chat-page">
+
+  <!-- ① 安全常驻条（吸顶；规则模式右侧「· 离线模式」由 js 拼接） -->
+  <view class="safety-strip">{{stripText}}</view>
+
+  <!-- ② 消息列表 / 空态 -->
+  <scroll-view
+    class="chat-scroll"
+    scroll-y
+    scroll-into-view="{{scrollInto}}"
+    scroll-with-animation="{{scrollAnim}}"
+  >
+    <!-- ③ 空态：距顶 15vh，✨ 160rpx 圆 + 4 个推荐问题 chip lg -->
+    <view wx:if="{{empty}}" class="chat-empty">
+      <view class="chat-empty-avatar">✨</view>
+      <view class="chat-empty-title">我是小美</view>
+      <text class="chat-empty-sub">{{emptySub}}</text>
+      <view class="chat-empty-sugs" wx:if="{{suggestions.length}}">
+        <chip-group
+          options="{{sugOptions}}"
+          value="{{null}}"
+          size="lg"
+          columns="{{1}}"
+          bind:change="onSugChange"
+        />
+      </view>
+    </view>
+
+    <!-- 消息行：日期分隔 / user 气泡 / ai 气泡 / safety 急症卡 -->
+    <block wx:for="{{display}}" wx:key="id" wx:for-item="msg">
+      <view wx:if="{{msg.kind === 'date'}}" class="chat-date {{msg.gap}}" id="{{msg.id}}">{{msg.label}}</view>
+
+      <view
+        wx:else
+        id="{{msg.id}}"
+        class="bubble-row {{msg.role === 'user' ? 'bubble-row-user' : ''}} {{msg.gap}}"
+      >
+        <view wx:if="{{msg.role !== 'user'}}" class="bubble-avatar" aria-hidden="true">✨</view>
+
+        <!-- 用户气泡：右对齐（无头像、无 actions） -->
+        <view wx:if="{{msg.role === 'user'}}" class="bubble-user">
+          <text user-select>{{msg.content}}</text>
+        </view>
+
+        <!-- 小美内容列：气泡 + actions + 来源小字 -->
+        <view wx:else class="bubble-col">
+          <view
+            class="{{msg.type === 'safety' ? 'bubble-safety' : 'bubble-ai'}}"
+            data-mid="{{msg.id}}"
+            bindlongpress="onCopy"
+          >
+            <text class="{{msg.type === 'safety' ? 'bubble-safety-title' : ''}}" user-select>{{msg.content}}</text>
+            <!-- 急症卡：actions 在卡内（拨打 120 用 btn-danger，高 80rpx 由全局类处理） -->
+            <view
+              wx:if="{{msg.type === 'safety' && msg.actions.length}}"
+              class="bubble-actions"
+            >
+              <button
+                wx:for="{{msg.actions}}"
+                wx:for-item="act"
+                wx:for-index="aidx"
+                wx:key="aidx"
+                class="btn-danger"
+                hover-class="btn-hover"
+                data-mid="{{msg.id}}"
+                data-aidx="{{aidx}}"
+                bindtap="handleAction"
+              >{{act.label}}</button>
+            </view>
+          </view>
+
+          <!-- text 消息：actions 行在气泡下方（btn-secondary-sm） -->
+          <view wx:if="{{msg.type !== 'safety' && msg.actions.length}}" class="bubble-actions">
+            <button
+              wx:for="{{msg.actions}}"
+              wx:for-item="act"
+              wx:for-index="aidx"
+              wx:key="aidx"
+              class="btn-secondary-sm"
+              hover-class="btn-hover"
+              disabled="{{act.applied}}"
+              data-mid="{{msg.id}}"
+              data-aidx="{{aidx}}"
+              bindtap="handleAction"
+            >{{act.applied ? '已记录' : act.label}}</button>
+          </view>
+
+          <!-- 来源小字：离线回答 / 已按安全规则改写 -->
+          <view wx:if="{{msg.sourceLabel}}" class="bubble-source">{{msg.sourceLabel}}</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 发送中：「小美正在输入」气泡（三个跳动点，全局类） -->
+    <view wx:if="{{typing}}" class="bubble-row chat-typing-row">
+      <view class="bubble-avatar" aria-hidden="true">✨</view>
+      <view class="bubble-col">
+        <view class="bubble-ai">
+          <view class="bubble-typing">
+            <view class="bubble-typing-dot"></view>
+            <view class="bubble-typing-dot"></view>
+            <view class="bubble-typing-dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部锚点 ×2（交替赋值保证重复滚动生效） -->
+    <view id="bot_a" class="chat-anchor"></view>
+    <view id="bot_b" class="chat-anchor"></view>
+  </scroll-view>
+
+  <!-- ④ 输入区：横滑快捷 chip（键盘弹起时隐藏）+ textarea + 圆形发送钮 -->
+  <view class="chat-dock" style="{{dockStyle}}">
+    <scroll-view wx:if="{{quickChips.length && !keyboardUp}}" class="quick-scroll" scroll-x>
+      <view
+        wx:for="{{quickChips}}"
+        wx:key="*this"
+        class="quick-chip"
+        hover-class="quick-chip-press"
+        data-q="{{item}}"
+        bindtap="onQuickTap"
+      >{{item}}</view>
+    </scroll-view>
+    <view class="chat-input-row">
+      <textarea
+        class="chat-input"
+        value="{{input}}"
+        maxlength="300"
+        auto-height
+        adjust-position="{{false}}"
+        show-confirm-bar="{{false}}"
+        confirm-type="send"
+        placeholder="问小美任何问题…"
+        placeholder-class="ph"
+        bindinput="onInput"
+        bindconfirm="onSend"
+        bindkeyboardheightchange="onKeyboard"
+      />
+      <view
+        class="chat-send {{(input && !sending) ? '' : 'chat-send-off'}}"
+        hover-class="btn-hover"
+        bindtap="onSend"
+        aria-label="发送"
+      >➤</view>
+    </view>
+  </view>
+</view>

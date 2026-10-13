@@ -1,0 +1,30 @@
+/* pages/plan — 用药方案（02-UX §3.7）；仅页面私有布局 */
+
+.picker {
+  color: var(--c-text-1);
+  font-size: var(--fs-body);
+  min-height: 44rpx;
+  line-height: 44rpx;
+}
+
+.timeline-item {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+  padding: var(--sp-2) 0;
+  border-bottom: 1rpx solid var(--c-border);
+}
+.timeline-item:last-child {
+  border-bottom: none;
+}
+.timeline-date {
+  width: 200rpx;
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-3);
+  font-variant-numeric: tabular-nums;
+}
+.timeline-label {
+  flex: 1;
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}

@@ -1,0 +1,259 @@
+<!-- pages/onboarding — 首次启动 6 步（02-UX §4.1） -->
+<view class="page page-footer onb" style="padding-top:{{topPad}}px">
+
+  <!-- 顶部自绘栏：返回 + 进度点 -->
+  <view class="onb-top">
+    <view class="onb-back" wx:if="{{step > 1}}" hover-class="btn-hover" bindtap="goBack" aria-label="上一步">‹</view>
+    <view class="onb-dots">
+      <view wx:for="{{[1,2,3,4,5,6]}}" wx:key="*this"
+            class="onb-dot {{item <= step ? 'onb-dot-on' : ''}} {{item === step ? 'onb-dot-cur' : ''}}"></view>
+    </view>
+  </view>
+
+  <!-- 步骤内容：切换时水平滑动 250ms -->
+  <view class="onb-body {{animCls}}">
+
+    <!-- Step 1 欢迎 -->
+    <view wx:if="{{step === 1}}">
+      <view class="onb-hero">🌱</view>
+      <view class="onb-h1">你好，我是司美助手</view>
+      <text class="onb-lead">{{welcomeLead}}</text>
+      <view class="onb-points">
+        <view class="onb-point" wx:for="{{welcomePoints}}" wx:key="icon">
+          <text class="onb-point-icon">{{item.icon}}</text>
+          <text class="onb-point-text">{{item.text}}</text>
+        </view>
+      </view>
+
+      <!-- 隐私政策 + 服务条款（合规 #1）：勾选后才可进入下一步 -->
+      <view class="onb-check" hover-class="card-hover" bindtap="togglePrivacy" aria-role="checkbox" aria-checked="{{privacyAccepted}}">
+        <view class="onb-check-box {{privacyAccepted ? 'onb-check-on' : ''}}">{{privacyAccepted ? '✓' : ''}}</view>
+        <text class="onb-check-text">我已阅读并同意
+          <text class="onb-link" hover-class="link-hover" catchtap="openPrivacy">《隐私政策》</text>
+          与
+          <text class="onb-link" hover-class="link-hover" catchtap="openTerms">《服务条款》</text>
+        </text>
+      </view>
+    </view>
+
+    <!-- Step 2 免责声明 -->
+    <view wx:if="{{step === 2}}">
+      <view class="onb-h1">用之前，请花 30 秒读完</view>
+      <view class="onb-disclaimer">
+        <view class="onb-disclaimer-lead">司美助手是一个帮你记录和学习的工具，AI「小美」是陪伴助手，<text class="onb-strong">不是医生</text>。</view>
+        <view class="onb-li" wx:for="{{disclaimerItems}}" wx:key="*this">
+          <text class="onb-li-no num">{{index + 1}}.</text>
+          <text class="onb-li-text">{{item}}</text>
+        </view>
+      </view>
+      <view class="onb-check" hover-class="card-hover" bindtap="toggleDisclaimer" aria-role="checkbox" aria-checked="{{disclaimerAccepted}}">
+        <view class="onb-check-box {{disclaimerAccepted ? 'onb-check-on' : ''}}">{{disclaimerAccepted ? '✓' : ''}}</view>
+        <text class="onb-check-text">我已阅读并理解以上内容</text>
+      </view>
+    </view>
+
+    <!-- Step 3 身体数据 -->
+    <view wx:if="{{step === 3 && !minor}}">
+      <view class="onb-h1">先认识一下你</view>
+      <view class="onb-sub">只保存在你的手机里</view>
+
+      <view class="onb-field">
+        <view class="onb-field-label">昵称（选填）</view>
+        <view class="input-box {{focus.nickname ? 'input-box-focus' : ''}}">
+          <input class="onb-input" value="{{d.nickname}}" placeholder="怎么称呼你" placeholder-class="ph"
+                 bindinput="onNickname" data-field="nickname" bindfocus="onBoxFocus" bindblur="onBoxBlur" maxlength="10" />
+        </view>
+      </view>
+
+      <view class="onb-field">
+        <view class="onb-field-label">性别</view>
+        <chip-group options="{{sexOptions}}" value="{{d.sex}}" mode="single" size="md" columns="3" bindchange="onSex" />
+        <view class="form-error" wx:if="{{errors.sex}}">{{errors.sex}}</view>
+      </view>
+
+      <view class="onb-field">
+        <view class="onb-field-label">出生年份</view>
+        <picker mode="selector" range="{{years}}" value="{{yearIndex}}" bindchange="onBirthYear">
+          <view class="input-box">
+            <view class="onb-picker {{d.birthYear ? '' : 'ph'}}">{{d.birthYear || '选择年份'}}<text class="onb-picker-arrow">›</text></view>
+          </view>
+        </picker>
+        <view class="form-error" wx:if="{{errors.birthYear}}">{{errors.birthYear}}</view>
+      </view>
+
+      <view class="onb-field">
+        <view class="onb-field-label">身高（cm）</view>
+        <view class="input-box {{focus.height ? 'input-box-focus' : ''}}">
+          <input class="onb-input" type="digit" value="{{d.heightCm}}" placeholder="如 165" placeholder-class="ph"
+                 bindinput="onHeight" data-field="height" bindfocus="onBoxFocus" bindblur="onBoxBlur" />
+        </view>
+        <view class="form-error" wx:if="{{errors.heightCm}}">{{errors.heightCm}}</view>
+      </view>
+
+      <view class="onb-field">
+        <view class="onb-field-label">现在体重（kg）</view>
+        <view class="input-box {{focus.weight ? 'input-box-focus' : ''}}">
+          <input class="onb-input" type="digit" value="{{d.weightKg}}" placeholder="如 68.5" placeholder-class="ph"
+                 bindinput="onWeight" data-field="weight" bindfocus="onBoxFocus" bindblur="onBoxBlur" />
+        </view>
+        <view class="form-error" wx:if="{{errors.weightKg}}">{{errors.weightKg}}</view>
+        <view class="onb-bmi" wx:if="{{bmiText}}">BMI {{bmiText}}</view>
+      </view>
+
+      <view class="onb-field">
+        <view class="onb-field-label">目标体重（选填）</view>
+        <view class="input-box {{focus.goal ? 'input-box-focus' : ''}}">
+          <input class="onb-input" type="digit" value="{{d.goalWeightKg}}" placeholder="如 60" placeholder-class="ph"
+                 bindinput="onGoalWeight" data-field="goal" bindfocus="onBoxFocus" bindblur="onBoxBlur" />
+        </view>
+        <view class="form-error" wx:if="{{errors.goalWeightKg}}">{{errors.goalWeightKg}}</view>
+        <view class="onb-hint" wx:if="{{goalHint}}">{{goalHint}}</view>
+      </view>
+    </view>
+
+    <!-- Step 3：未成年替代文案（02-UX §4.1 Step 3） -->
+    <view wx:if="{{step === 3 && minor}}" class="onb-minor">
+      <view class="onb-hero">🌱</view>
+      <view class="onb-h1">司美助手目前只面向成年人</view>
+      <view class="onb-lead">如果你在考虑减重用药，请和家长一起去看医生。</view>
+    </view>
+
+    <!-- Step 4 健康情况 -->
+    <view wx:if="{{step === 4}}">
+      <view class="onb-h1">有这些情况吗？</view>
+      <view class="onb-sub">帮小美更安全地回答你，可多选</view>
+      <chip-group options="{{healthOptions}}" value="{{conditions}}" mode="multi" size="lg" columns="2" bindchange="onConditions" />
+
+      <!-- 特殊情况提示卡：非 modal，覆盖在按钮上方（02-UX §4.1 Step 4） -->
+      <view wx:if="{{showCondAlert}}" class="card onb-alert">
+        <view class="onb-alert-title">这一点很重要</view>
+        <view class="onb-alert-body">你选的情况可能不适合使用这类药，或者需要医生特别评估。请一定在用药前告诉医生。司美助手仍然可以陪你记录和学习。</view>
+        <button class="btn-primary" hover-class="btn-hover" bindtap="condAlertOk">我知道了，继续</button>
+      </view>
+    </view>
+
+    <!-- Step 5 用药状态 + 方案 -->
+    <view wx:if="{{step === 5}}">
+      <view class="onb-h1">你现在到哪一步了？</view>
+      <view class="onb-status">
+        <view wx:for="{{statusOptions}}" wx:key="value"
+              class="onb-status-item {{medStatus === item.value ? 'onb-status-on' : ''}}"
+              hover-class="card-hover" data-value="{{item.value}}" bindtap="onStatus">
+          <text class="onb-status-icon">{{item.icon}}</text>
+          <text class="onb-status-label">{{item.label}}</text>
+        </view>
+      </view>
+
+      <!-- 在用：药物 + 当前剂量 + 开始日期 + 每周打针日（均必填） -->
+      <view wx:if="{{medStatus === 'active'}}">
+        <view class="onb-sub">按医生给你的方案填写</view>
+        <view class="onb-field">
+          <view class="onb-field-label">药物</view>
+          <chip-group options="{{medOptions}}" value="{{medId}}" mode="single" size="md" bindchange="onMedId" />
+        </view>
+        <view class="onb-field">
+          <view class="onb-field-label">当前剂量</view>
+          <chip-group options="{{doseOptions}}" value="{{doseMg}}" mode="single" size="md" bindchange="onDoseMg" />
+        </view>
+        <view class="onb-field">
+          <view class="onb-field-label">开始日期</view>
+          <picker mode="date" end="{{todayKey}}" value="{{startDate}}" bindchange="onStartDate">
+            <view class="input-box">
+              <view class="onb-picker">{{startDate || '选择日期'}}<text class="onb-picker-arrow">›</text></view>
+            </view>
+          </picker>
+        </view>
+        <view class="onb-field">
+          <view class="onb-field-label">每周打针日</view>
+          <chip-group options="{{weekdayOptions}}" value="{{injectWeekday}}" mode="single" size="md" columns="4" bindchange="onInjectWeekday" />
+        </view>
+      </view>
+
+      <!-- 已开药未开始：药物 + 起始剂量 + 计划打针日（选填） -->
+      <view wx:if="{{medStatus === 'prescribed'}}">
+        <view class="onb-field">
+          <view class="onb-field-label">药物</view>
+          <chip-group options="{{medOptions}}" value="{{medId}}" mode="single" size="md" bindchange="onMedId" />
+        </view>
+        <view class="onb-field">
+          <view class="onb-field-label">起始剂量</view>
+          <chip-group options="{{doseOptions}}" value="{{doseMg}}" mode="single" size="md" bindchange="onDoseMg" />
+        </view>
+        <view class="onb-field">
+          <view class="onb-field-label">计划打针日（选填）</view>
+          <chip-group options="{{weekdayOptions}}" value="{{plannedWeekday}}" mode="single" size="md" columns="4" bindchange="onPlannedWeekday" />
+        </view>
+      </view>
+
+      <!-- 已停药：药物 + 停药日期 -->
+      <view wx:if="{{medStatus === 'stopped'}}">
+        <view class="onb-field">
+          <view class="onb-field-label">药物</view>
+          <chip-group options="{{medOptions}}" value="{{medId}}" mode="single" size="md" bindchange="onMedId" />
+        </view>
+        <view class="onb-field">
+          <view class="onb-field-label">停药日期</view>
+          <picker mode="date" end="{{todayKey}}" value="{{stopDate}}" bindchange="onStopDate">
+            <view class="input-box">
+              <view class="onb-picker">{{stopDate || '选择日期'}}<text class="onb-picker-arrow">›</text></view>
+            </view>
+          </picker>
+        </view>
+        <view class="onb-hint">我们会记下你现在的体重 {{d.weightKg}}kg，作为守护区间的基准</view>
+      </view>
+    </view>
+
+    <!-- Step 6 我的计划 -->
+    <view wx:if="{{step === 6}}">
+      <view class="onb-h1">{{firstName}}，这是小美为你准备的每日目标</view>
+      <view class="onb-targets">
+        <view class="onb-target" wx:for="{{targetCards}}" wx:key="icon">
+          <view class="onb-target-icon">{{item.icon}}</view>
+          <view class="onb-target-main">{{item.main}}</view>
+          <view class="onb-target-sub">{{item.sub}}</view>
+        </view>
+      </view>
+      <view class="bubble-row">
+        <view class="bubble-avatar">✨</view>
+        <view class="bubble-col">
+          <view class="bubble-ai">{{bubbleText}}</view>
+        </view>
+      </view>
+      <button wx:if="{{showCalendarBtn}}" class="btn-secondary onb-calendar {{calendarAdded ? 'btn-disabled' : ''}}"
+              hover-class="btn-hover" disabled="{{calendarAdded}}" bindtap="addCalendar">
+        {{calendarAdded ? '已添加 ✓' : '把打针日加到手机日历'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 底部固定主按钮 -->
+  <view class="footer-bar">
+    <button wx:if="{{step === 1}}" class="btn-primary" hover-class="btn-hover" bindtap="goNext">开始</button>
+    <button wx:elif="{{step === 2}}" class="btn-primary" hover-class="btn-hover" disabled="{{!disclaimerAccepted}}" bindtap="goNext">我明白了，继续</button>
+    <button wx:elif="{{step === 3}}" class="btn-primary" hover-class="btn-hover" disabled="{{!step3Ready}}" bindtap="goNext">下一步</button>
+    <button wx:elif="{{step === 4}}" class="btn-primary" hover-class="btn-hover" bindtap="goNext">下一步</button>
+    <button wx:elif="{{step === 5}}" class="btn-primary" hover-class="btn-hover" disabled="{{!step5Ready}}" bindtap="goNext">下一步</button>
+    <button wx:else class="btn-primary" hover-class="btn-hover" bindtap="finish">进入司美助手</button>
+  </view>
+
+  <!-- 隐私政策 + 服务条款弹窗（Step 1 触发） -->
+  <view wx:if="{{showPrivacyModal || showTermsModal}}" class="modal-mask" bindtap="closePrivacyModal" catchtouchmove="true">
+    <view class="modal-card privacy-doc" catchtap="noop">
+      <view class="modal-head">
+        <text class="modal-title">{{showPrivacyModal ? privacyDoc.title : termsDoc.title}}</text>
+        <view class="modal-close" hover-class="btn-hover" bindtap="{{showPrivacyModal ? 'closePrivacyModal' : 'closeTermsModal'}}">×</view>
+      </view>
+      <scroll-view scroll-y class="modal-body">
+        <view class="privacy-meta">版本：{{showPrivacyModal ? privacyDoc.version : termsDoc.version}} · 生效日：{{showPrivacyModal ? privacyDoc.effectiveAt : termsDoc.effectiveAt}}</view>
+        <view class="privacy-summary">{{showPrivacyModal ? privacyDoc.summary : termsDoc.summary}}</view>
+        <block wx:for="{{showPrivacyModal ? privacyDoc.sections : termsDoc.sections}}" wx:key="h" wx:for-item="sec">
+          <view class="privacy-h">{{sec.h}}</view>
+          <view class="privacy-p">{{sec.p}}</view>
+        </block>
+      </scroll-view>
+      <view class="modal-foot">
+        <button class="btn-primary" hover-class="btn-hover" bindtap="{{showPrivacyModal ? 'closePrivacyModal' : 'closeTermsModal'}}">我已阅读</button>
+      </view>
+    </view>
+  </view>
+</view>

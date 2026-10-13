@@ -1,0 +1,85 @@
+/* pages/me — 页面私有布局（02-UX §3.4；颜色一律 var(--c-*)，全局类不重定义） */
+
+/* ---- ① 档案头（无卡片） ---- */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sp-4) 0 var(--sp-5);
+}
+.profile-avatar {
+  font-size: 96rpx;
+  line-height: 1;
+}
+.profile-name {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--c-text-1);
+  text-align: center;
+}
+/* 未起名时的引导态 */
+.profile-name-empty {
+  font-weight: 400;
+  color: var(--c-text-3);
+}
+.profile-meta {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+  text-align: center;
+}
+
+/* ---- ② 三格统计（一张卡三等分） ---- */
+.stats {
+  display: flex;
+  padding: 0;
+}
+.stat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sp-3) 0;
+}
+.stat + .stat {
+  border-left: 1rpx solid var(--c-border);
+}
+.stat-value {
+  display: flex;
+  align-items: baseline;
+  font-size: var(--fs-h2);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--c-text-1);
+}
+.stat-unit {
+  margin-left: 4rpx;
+  font-size: var(--fs-caption);
+  font-weight: 400;
+  color: var(--c-text-3);
+}
+.stat-label {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+
+/* ---- ③④ 列表卡：行间细分隔线；右侧灰字过长时收窄换行不挤压标题 ---- */
+.me-list .list-item + .list-item {
+  border-top: 1rpx solid var(--c-border);
+}
+.me-list .list-item-extra {
+  max-width: 55%;
+  text-align: right;
+}
+
+/* ---- ⑤ 页脚（.page 的 padding-bottom 已为 tab bar 预留空间，无需再加安全区边距） ---- */
+.me-foot {
+  padding: var(--sp-4) 0;
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}

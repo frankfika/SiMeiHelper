@@ -1,0 +1,385 @@
+/* pages/onboarding — 页面私有布局（颜色/圆角/间距一律用 CSS 变量，全局类不重定义） */
+
+.onb {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+/* ---- 顶部自绘栏 ---- */
+.onb-top {
+  display: flex;
+  align-items: center;
+  min-height: 72rpx;
+  margin-bottom: var(--sp-3);
+}
+.onb-back {
+  width: 88rpx;
+  height: 88rpx;
+  margin-left: -16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  color: var(--c-text-1);
+}
+.onb-dots {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+}
+.onb-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: var(--c-surface-2);
+  transition: background 250ms ease-out;
+}
+.onb-dot-on {
+  background: var(--c-primary);
+}
+.onb-dot-cur {
+  width: 32rpx;
+  border-radius: var(--r-pill);
+}
+
+/* ---- 步骤切换：水平滑动 250ms（02-UX §4.1） ---- */
+.onb-body {
+  flex: 1;
+}
+.step-next {
+  animation: onb-step-next 250ms ease-out both;
+}
+.step-back {
+  animation: onb-step-back 250ms ease-out both;
+}
+@keyframes onb-step-next {
+  from { opacity: 0; transform: translateX(48rpx); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes onb-step-back {
+  from { opacity: 0; transform: translateX(-48rpx); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ---- 文本层级 ---- */
+.onb-hero {
+  margin: var(--sp-5) 0 var(--sp-4);
+  font-size: 96rpx;
+  line-height: 1;
+  text-align: center;
+}
+.onb-h1 {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--c-text-1);
+}
+.onb-sub {
+  margin: var(--sp-2) 0 var(--sp-4);
+  font-size: var(--fs-body);
+  color: var(--c-text-2);
+}
+.onb-lead {
+  display: block;
+  margin: var(--sp-3) 0 var(--sp-5);
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--c-text-2);
+  white-space: pre-wrap;
+}
+.onb-strong {
+  font-weight: 600;
+  color: var(--c-text-1);
+}
+
+/* ---- Step 1 要点行 ---- */
+.onb-points {
+  margin-top: var(--sp-5);
+}
+.onb-point {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-2) 0;
+}
+.onb-point-icon {
+  font-size: 36rpx;
+  margin-right: var(--sp-2);
+}
+.onb-point-text {
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+
+/* ---- Step 2 免责 ---- */
+.onb-disclaimer {
+  margin: var(--sp-3) 0 var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--c-surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  border: var(--border-card);
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  line-height: 1.7;
+}
+.onb-disclaimer-lead {
+  margin-bottom: var(--sp-3);
+}
+.onb-li {
+  display: flex;
+  margin-top: var(--sp-2);
+}
+.onb-li-no {
+  flex-shrink: 0;
+  margin-right: var(--sp-1);
+  color: var(--c-text-3);
+}
+.onb-li-text {
+  flex: 1;
+  min-width: 0;
+}
+.onb-check {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-1);
+}
+.onb-check-box {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: var(--sp-2);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid var(--c-border);
+  border-radius: var(--r-sm);
+  background: var(--c-surface);
+  color: var(--c-on-primary);
+  font-size: 28rpx;
+  transition: all 200ms ease-out;
+}
+.onb-check-on {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+}
+.onb-check-text {
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+.onb-link {
+  color: var(--c-primary);
+  text-decoration: underline;
+}
+.link-hover {
+  opacity: 0.6;
+}
+
+/* ---- 隐私政策 / 服务条款弹窗（合规 #1） ---- */
+.modal-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal-card {
+  width: 88vw;
+  max-width: 640rpx;
+  max-height: 86vh;
+  background: var(--c-surface);
+  border-radius: var(--r-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--shadow-modal);
+}
+.privacy-doc {
+  max-height: 86vh;
+}
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1rpx solid var(--c-border);
+}
+.modal-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--c-text-1);
+}
+.modal-close {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  text-align: center;
+  font-size: 40rpx;
+  color: var(--c-text-3);
+}
+.modal-body {
+  flex: 1;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-body-sm);
+  line-height: 1.7;
+  color: var(--c-text-1);
+}
+.modal-foot {
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  border-top: 1rpx solid var(--c-border);
+}
+.privacy-meta {
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+  margin-bottom: var(--sp-2);
+}
+.privacy-summary {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  margin-bottom: var(--sp-4);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1rpx dashed var(--c-border);
+}
+.privacy-h {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--c-text-1);
+  margin-top: var(--sp-3);
+  margin-bottom: var(--sp-1);
+}
+.privacy-p {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---- 表单字段 ---- */
+.onb-field {
+  margin-top: var(--sp-4);
+}
+.onb-field-label {
+  margin-bottom: var(--sp-2);
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+.onb-input {
+  flex: 1;
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+.onb-picker {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+}
+.onb-picker-arrow {
+  color: var(--c-text-3);
+}
+.onb-bmi {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+.onb-hint {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-caption);
+  line-height: 1.5;
+  color: var(--c-text-2);
+}
+
+/* ---- Step 3 未成年替代页 ---- */
+.onb-minor {
+  padding-top: var(--sp-6);
+}
+
+/* ---- Step 4 特殊情况提示卡 ---- */
+.onb-alert {
+  margin-top: var(--sp-4);
+}
+.onb-alert-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--c-text-1);
+}
+.onb-alert-body {
+  margin: var(--sp-2) 0 var(--sp-3);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--c-text-2);
+}
+
+/* ---- Step 5 状态大选项卡 ---- */
+.onb-status {
+  margin-top: var(--sp-3);
+}
+.onb-status-item {
+  display: flex;
+  align-items: center;
+  min-height: 112rpx;
+  padding: 0 var(--sp-4);
+  margin-bottom: var(--sp-2);
+  box-sizing: border-box;
+  background: var(--c-surface-2);
+  border: 2rpx solid transparent;
+  border-radius: var(--r-md);
+}
+.onb-status-on {
+  background: var(--c-primary-soft);
+  border-color: var(--c-primary);
+}
+.onb-status-icon {
+  margin-right: var(--sp-2);
+  font-size: 36rpx;
+}
+.onb-status-label {
+  font-size: var(--fs-body);
+  font-weight: 500;
+  color: var(--c-text-1);
+}
+.onb-status-on .onb-status-label {
+  color: var(--c-primary);
+}
+
+/* ---- Step 6 目标小卡 ---- */
+.onb-targets {
+  display: flex;
+  gap: var(--sp-2);
+  margin: var(--sp-4) 0;
+}
+.onb-target {
+  flex: 1;
+  min-width: 0;
+  padding: var(--sp-3) var(--sp-2);
+  box-sizing: border-box;
+  text-align: center;
+  background: var(--c-surface);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-card);
+  border: var(--border-card);
+}
+.onb-target-icon {
+  font-size: 40rpx;
+  line-height: 1.2;
+}
+.onb-target-main {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-body-sm);
+  font-weight: 600;
+  color: var(--c-text-1);
+}
+.onb-target-sub {
+  margin-top: 2rpx;
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+.onb-calendar {
+  margin-top: var(--sp-4);
+}

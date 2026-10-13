@@ -1,0 +1,353 @@
+/* pages/log — 页面私有布局（颜色一律 var(--c-*)，全局类不重定义；03-VISUAL §5.2） */
+
+/* 根节点底部留白：footer-bar(.on-tab) + 自定义 tab bar（03-VISUAL §5.2：≥ 260rpx + 安全区） */
+.page-log {
+  padding-bottom: calc(276rpx + env(safe-area-inset-bottom));
+}
+
+/* ---- 首次引导 / 欢迎回来 ---- */
+.guide-line {
+  text-align: center;
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  margin-bottom: var(--sp-2);
+}
+
+/* ---- ① 日期切换行：箭头 88×88 热区，标题 --fs-h3 居中 ---- */
+.date-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
+.date-nav-arrow {
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-h2);
+  color: var(--c-primary);
+  flex-shrink: 0;
+}
+.date-nav-off {
+  color: var(--c-text-3);
+  opacity: .4;
+}
+.date-nav-title {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  color: var(--c-text-1);
+}
+.ro-notice {
+  margin-bottom: var(--sp-3);
+}
+
+/* ---- ② 一句话卡 ---- */
+.nl-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 120rpx; /* 至少 2 行 */
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--c-surface-2);
+  border-radius: var(--r-md);
+  font-size: var(--fs-body);
+  color: var(--c-text-1);
+  line-height: 1.6;
+}
+.nl-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--sp-2);
+}
+/* 红旗安全卡（bubble-safety 全局类；此处只调流式布局与字号） */
+.nl-safety {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-body-sm);
+}
+.nl-preview {
+  border-top: 1rpx dashed var(--c-border);
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+}
+.nl-preview-title {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  margin-bottom: var(--sp-2);
+}
+.nl-preview-chips {
+  display: flex;
+  flex-wrap: wrap;
+}
+.nl-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 64rpx;
+  padding: 0 24rpx;
+  margin: 0 var(--sp-2) var(--sp-2) 0;
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-body-sm);
+}
+.nl-chip-x {
+  margin-left: var(--sp-1);
+  padding: 0 4rpx;
+  opacity: .7;
+}
+.nl-preview-empty {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+}
+.nl-preview-btns {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+.nl-apply {
+  flex: 1;
+}
+
+/* ---- ③ 结构化卡 ---- */
+/* 完成反馈常驻小字：✨ 前缀由本类提供，不在文案里手写 */
+.feedback-line {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+  margin-bottom: var(--sp-2);
+}
+.feedback-line::before {
+  content: '✨ ';
+  color: var(--c-accent);
+}
+.card-banner {
+  margin-bottom: var(--sp-3);
+}
+.card-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+.card-banner-link {
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+/* 上下结构行（症状 / 蛋白 / 水 / 有氧）：标题行 + 控件行（03-VISUAL §5.2 样式要点） */
+.row-stack {
+  padding: var(--sp-3) 0;
+  border-bottom: 1rpx solid var(--c-border);
+}
+.row-stack:last-child {
+  border-bottom: none;
+}
+.row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.row-ctrl {
+  margin-top: var(--sp-2);
+}
+.cardio-ctrl {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.row-hint {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-3);
+}
+.row-note {
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+  margin-top: var(--sp-1);
+}
+/* 行高亮 1s（「填进去」/ focusField 共用） */
+.row-flash {
+  animation: row-flash 1s ease-out;
+}
+@keyframes row-flash {
+  0% { background: var(--c-primary-soft); }
+  100% { background: transparent; }
+}
+
+/* 体重输入 */
+.weight-input {
+  width: 180rpx;
+}
+.strength-title {
+  flex: 1;
+  min-width: 0;
+  margin-right: var(--sp-2);
+}
+
+/* 难受模式折叠区 */
+.fold-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) 0;
+}
+.fold-arrow {
+  font-size: var(--fs-h3);
+  color: var(--c-text-3);
+  transform: rotate(0deg);
+  transition: transform 200ms ease-out;
+}
+.fold-arrow-on {
+  transform: rotate(90deg);
+}
+
+/* ---- ⑤ 月历 ---- */
+.cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cal-head .cal-label {
+  margin-bottom: 0;
+}
+.cal-stats {
+  flex: 1;
+  margin-left: var(--sp-2);
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+.cal-trend {
+  flex-shrink: 0;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: var(--sp-2);
+}
+.cal-dow {
+  margin-top: var(--sp-3);
+}
+.cal-dow-cell {
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+.cal-cell {
+  min-height: 88rpx; /* 可点热区 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rpx 0;
+  box-sizing: border-box;
+}
+.cal-cell-future {
+  opacity: .35;
+}
+.cal-day {
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-1);
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+/* 点日期切到该日：选中日高亮 */
+.cal-day-sel {
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  font-weight: 500;
+}
+/* 完成 = primary 实心小圆点 */
+.cal-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  margin-top: 4rpx;
+}
+.cal-dot-done {
+  background: var(--c-primary);
+}
+/* 有记录未完成 = 空心圆 */
+.cal-dot-hollow {
+  border: 3rpx solid var(--c-primary);
+  box-sizing: border-box;
+}
+/* 难受日 = warning 色小三角 */
+.cal-tri {
+  width: 0;
+  height: 0;
+  margin-top: 3rpx;
+  border-left: 8rpx solid transparent;
+  border-right: 8rpx solid transparent;
+  border-bottom: 10rpx solid var(--c-warning);
+}
+/* 打针日 = 日期下 💉（10px 级小字） */
+.cal-jab {
+  margin-top: 2rpx;
+  font-size: 20rpx;
+  line-height: 1;
+}
+
+/* ---- footer 反馈气泡（bubble-ai 全局类 + 进场动画 card-in） ---- */
+.fb-bubble {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--sp-2);
+}
+.fb-bubble-text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-body-sm);
+  padding: 16rpx 24rpx;
+}
+
+/* ---- 蛋白 1 份对照：底部弹出（250ms） ---- */
+.sheet-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 200;
+  background: var(--c-mask);
+}
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 300;
+  background: var(--c-surface);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  padding: var(--sp-4) var(--sp-4) calc(var(--sp-5) + env(safe-area-inset-bottom));
+  animation: sheet-up 250ms ease-out;
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.sheet-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--c-text-1);
+  margin-bottom: var(--sp-3);
+}
+.sheet-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--sp-2);
+}
+.sheet-dot {
+  color: var(--c-text-3);
+  margin-right: var(--sp-2);
+}
+.sheet-text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-body);
+  color: var(--c-text-2);
+}
+.sheet-btn {
+  margin-top: var(--sp-3);
+}

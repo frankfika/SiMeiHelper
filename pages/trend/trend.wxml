@@ -1,0 +1,65 @@
+<!-- pages/trend/trend.wxml — 体重趋势（02-UX §3.6） -->
+<view class="page">
+  <!-- 1. 范围切换：4 周 | 12 周 | 全部，默认 12 周 -->
+  <view class="segmented seg-wrap">
+    <view class="segmented-item {{range === 'w4' ? 'segmented-item-on' : ''}}" hover-class="btn-hover" data-range="w4" bindtap="onRange">4 周</view>
+    <view class="segmented-item {{range === 'w12' ? 'segmented-item-on' : ''}}" hover-class="btn-hover" data-range="w12" bindtap="onRange">12 周</view>
+    <view class="segmented-item {{range === 'all' ? 'segmented-item-on' : ''}}" hover-class="btn-hover" data-range="all" bindtap="onRange">全部</view>
+  </view>
+
+  <!-- 2. 统计卡 2×2；最后一格按速度分档着色 + 词 -->
+  <view class="card">
+    <view class="stat-grid">
+      <view class="stat-cell">
+        <view class="stat-label">起始</view>
+        <view class="stat-value num">{{startText}}<text class="stat-unit">kg</text></view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-label">当前</view>
+        <view class="stat-value num">{{currentText}}<text class="stat-unit">kg</text></view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-label">累计</view>
+        <view class="stat-value num">{{changeText}}</view>
+        <view class="stat-sub num" wx:if="{{changePctText}}">{{changePctText}}</view>
+      </view>
+      <view class="stat-cell rate-{{band}}">
+        <view class="stat-label">近两周</view>
+        <view class="stat-value num">{{rateText}}<text class="stat-unit">% / 周</text></view>
+        <view class="stat-band" wx:if="{{bandWord}}">{{bandWord}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 3. 图表卡；体重点 < 2 显示空态 -->
+  <view class="card">
+    <view wx:if="{{empty}}" class="empty">
+      <view class="empty-icon">📈</view>
+      <view class="empty-text">再记 {{needMore}} 次体重，就能看到趋势了</view>
+      <button class="btn-secondary empty-action" hover-class="btn-hover" bindtap="goLog">去记录</button>
+    </view>
+    <line-chart
+      wx:else
+      points="{{points}}"
+      avg="{{avg}}"
+      markers="{{markers}}"
+      goal="{{goal}}"
+      mode="full"
+      height="{{420}}"
+    />
+  </view>
+
+  <!-- 4. 小美解读（card-ai 小号） -->
+  <view class="card-ai">
+    <view class="card-label">小美解读</view>
+    <view class="ai-text">{{bandSentence}}</view>
+    <view class="ai-actions">
+      <button class="btn-text" hover-class="btn-hover" bindtap="goAsk">问小美 ›</button>
+    </view>
+  </view>
+
+  <!-- 5. 记录体重入口（本页无主按钮） -->
+  <view class="trend-footer">
+    <button class="btn-text" hover-class="btn-hover" bindtap="goLog">记今天的体重 ›</button>
+  </view>
+</view>

@@ -1,0 +1,93 @@
+<view class="page page-footer">
+  <view class="notice">这里记的是医生给你的方案。剂量调整请遵医嘱，司美助手不会建议剂量。</view>
+
+  <!-- 表单卡 -->
+  <view class="card">
+    <view class="card-label">用药状态</view>
+    <chip-group options="{{statusOptions}}" value="{{draft.status}}" mode="single" size="md" columns="3" bind:change="onPickStatus" />
+  </view>
+
+  <view class="card">
+    <view class="card-label">药物</view>
+    <chip-group options="{{medOptions}}" value="{{draft.medId}}" mode="single" size="md" columns="3" bind:change="onPickMed" />
+    <view class="form-row" wx:if="{{draft.medId}}">
+      <view class="form-row-title">品牌</view>
+      <view class="form-row-value"><input placeholder="选填，如诺和泰" value="{{draft.brand}}" bindinput="onBrandInput" /></view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{draft.medId && doseOptions.length}}">
+    <view class="card-label">当前剂量</view>
+    <chip-group options="{{doseOptions}}" value="{{draft.currentDoseMg}}" mode="single" size="md" columns="4" bind:change="onPickDose" />
+  </view>
+
+  <view class="card" wx:if="{{draft.medId}}">
+    <view class="form-row">
+      <view class="form-row-title">开始日期</view>
+      <view class="form-row-value">
+        <picker mode="date" value="{{draft.startDate}}" end="{{today}}" bindchange="onStartDate">
+          <view class="picker">{{draft.startDate || '选择日期'}}</view>
+        </picker>
+      </view>
+    </view>
+    <view class="form-row">
+      <view class="form-row-title">每周打针日</view>
+      <view class="form-row-value">
+        <chip-group options="{{weekdayOptions}}" value="{{draft.injectWeekday}}" mode="single" size="md" columns="4" bind:change="onPickInjectDay" />
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="form-row">
+      <view class="form-row-title">医生</view>
+      <view class="form-row-value"><input placeholder="选填" value="{{draft.doctor}}" bindinput="onDoctorInput" /></view>
+    </view>
+    <view class="form-row">
+      <view class="form-row-title">医院</view>
+      <view class="form-row-value"><input placeholder="选填" value="{{draft.hospital}}" bindinput="onHospitalInput" /></view>
+    </view>
+    <view class="form-row">
+      <view class="form-row-title">下次复诊</view>
+      <view class="form-row-value">
+        <picker mode="date" value="{{draft.nextVisitDate}}" start="{{today}}" bindchange="onVisitDate">
+          <view class="picker">{{draft.nextVisitDate || '选填'}}</view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提醒卡 -->
+  <view class="card" wx:if="{{showInjectCard}}">
+    <view class="card-label">把打针日加到手机日历</view>
+    <view class="form-row-help">每周 {{injectWeekdayLabel}} 9:00 提醒。</view>
+    <button wx:if="{{!calendarAdded.inject}}" class="btn-secondary-sm btn-inline" bindtap="onAddInjectCal">添加</button>
+    <view wx:else class="form-row-help">已添加 ✓</view>
+  </view>
+
+  <view class="card" wx:if="{{showVisitCard}}">
+    <view class="card-label">把复诊日加到手机日历</view>
+    <view class="form-row-help">复诊当天 8:00，前一天提前 1 天提醒。</view>
+    <button wx:if="{{!calendarAdded.visit}}" class="btn-secondary-sm btn-inline" bindtap="onAddVisitCal">添加</button>
+    <view wx:else class="form-row-help">已添加 ✓</view>
+  </view>
+
+  <view class="card">
+    <view class="card-label">每晚打卡提醒</view>
+    <switch checked="{{showCheckinCard}}" bindchange="onToggleDailyCheckin" />
+    <view class="form-row-help">每晚 21:00 提醒一次。</view>
+  </view>
+
+  <!-- 方案记录 -->
+  <view class="card" wx:if="{{history.length}}">
+    <view class="card-label">方案记录</view>
+    <view wx:for="{{history}}" wx:key="date" class="timeline-item">
+      <view class="timeline-date">{{item.date}}</view>
+      <view class="timeline-label">{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="footer-bar">
+    <button class="btn-primary {{canSave ? '' : 'btn-disabled'}}" bindtap="onSave">保存</button>
+  </view>
+</view>

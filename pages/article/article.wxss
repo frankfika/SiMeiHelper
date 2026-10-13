@@ -1,0 +1,64 @@
+/* pages/article — 页面私有样式（颜色一律 var(--c-*)，不重定义全局类） */
+
+/* ---- ① 标题区（§3.8.1） ---- */
+.art-title {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--c-text-1);
+}
+.art-meta {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+
+/* ---- ② 正文（§3.8.2：小标题 h3 + 圆点条目 .kb-li，行高 1.7） ---- */
+.art-body {
+  margin-top: var(--sp-3);
+}
+.art-h {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--c-text-1);
+}
+/* 第一个 section 的小标题贴卡顶 */
+.art-h:first-child {
+  margin-top: 0;
+}
+.kb-li {
+  position: relative;
+  margin-top: var(--sp-1);
+  padding-left: 30rpx;
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--c-text-1);
+}
+/* 圆点：primary 色，对齐首行文字中线 */
+.kb-li::before {
+  content: '';
+  position: absolute;
+  left: 6rpx;
+  top: .66em;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: var(--c-primary);
+}
+
+/* ---- ③ 剂量 notice（§3.8.3） ---- */
+.art-notice {
+  margin-bottom: var(--sp-3);
+}
+
+/* ---- ④ 问小美卡（§3.8.4） ---- */
+.art-ask-text {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-body-sm);
+  color: var(--c-text-2);
+}
+.art-ask-btn {
+  margin-top: var(--sp-3);
+}

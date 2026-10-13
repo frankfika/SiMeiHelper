@@ -1,0 +1,34 @@
+<view class="page">
+  <view class="report-range">
+    <view wx:for="{{rangeOptions}}" wx:key="value" class="seg-item {{range === item.value ? 'seg-item-on' : ''}}" data-value="{{item.value}}" bindtap="onPickRange">{{item.label}}</view>
+  </view>
+
+  <view wx:if="{{empty}}" class="notice">还没有用药记录，摘要内容会少一些。</view>
+
+  <view class="report-card">
+    <view class="report-head">
+      <view class="report-title">司美助手 · 就诊摘要</view>
+      <view class="report-date">生成于 {{nowLabel}}</view>
+    </view>
+
+    <view wx:for="{{sections}}" wx:key="title" class="report-section">
+      <view class="report-section-title">{{item.title}}</view>
+      <view wx:for="{{item.rows}}" wx:key="*this" class="report-row">
+        <view class="report-row-key">{{item[0]}}</view>
+        <view class="report-row-val">{{item[1]}}</view>
+      </view>
+    </view>
+
+    <view class="report-section" wx:if="{{visitQuestions.length}}">
+      <view class="report-section-title">想问医生的问题</view>
+      <view wx:for="{{visitQuestions}}" wx:key="*this" class="report-q">{{index + 1}}. {{item}}</view>
+    </view>
+
+    <view class="report-foot">由用户自行记录，仅供参考。</view>
+  </view>
+
+  <view class="report-actions">
+    <button class="btn-primary" bindtap="onCopy">复制文字版</button>
+    <button class="btn-text" bindtap="onShareHint">截图提示</button>
+  </view>
+</view>

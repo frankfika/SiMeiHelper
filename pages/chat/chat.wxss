@@ -1,0 +1,166 @@
+/**
+ * pages/chat — 页面私有布局（真相源：docs/03-VISUAL.md §4.8、§5.3）
+ * 颜色一律 var(--c-*)；气泡 .bubble-*、打字点、.safety-strip、.ph 均为全局类（app.wxss），此处不重定义。
+ *
+ * 布局（§5.3）：.chat-page 锁 100vh 纵向 flex ——
+ *   safety-strip（吸顶，flex-shrink:0）+ .chat-scroll（flex:1，消息区）+ .chat-dock（流内贴底）。
+ * 消息区高度 = 视口 − safety-strip − 输入区 − tab bar，由 flex 自动分摊；
+ * 自定义 tab bar（100rpx + 安全区）用 page 的 padding-bottom 预留，输入区因此始终在其之上。
+ * 键盘：js 以内联 style 抬升 .chat-dock（translateY），过渡在本文件 .chat-dock 上声明。
+ */
+.chat-page {
+  height: 100vh;
+  padding: 0 0 calc(100rpx + env(safe-area-inset-bottom));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- ② 消息列表 ---- */
+.chat-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 24rpx 32rpx 0;
+}
+
+/* 消息间距（§4.8）：同角色连续 sp-2，换角色 sp-3（js 在 gap 字段里给出类名） */
+.gap-2 {
+  margin-top: var(--sp-2);
+}
+.gap-3 {
+  margin-top: var(--sp-3);
+}
+
+/* 日期分隔：居中小字（§3.3 跨天插入） */
+.chat-date {
+  margin-top: var(--sp-3);
+  margin-bottom: var(--sp-2);
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}
+
+/* 发送中的「小美正在输入」行 */
+.chat-typing-row {
+  margin-top: var(--sp-2);
+}
+
+/* 底部滚动锚点：留一点高度，滚到底后最后一条消息不贴边 */
+.chat-anchor {
+  height: 8rpx;
+}
+
+/* ---- ③ 空态（§5.3）：距顶 15vh，✨ 160rpx 圆 → 标题 → 副文案 → 4 个推荐问题 ---- */
+.chat-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15vh 0 var(--sp-5);
+}
+.chat-empty-avatar {
+  width: 160rpx;
+  height: 160rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--c-accent-soft);
+  font-size: 96rpx;
+  line-height: 1;
+}
+.chat-empty-title {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-h1);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--c-text-1);
+  text-align: center;
+}
+.chat-empty-sub {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--c-text-2);
+  text-align: center;
+  white-space: pre-line; /* js 文案中的 \n 生效 */
+}
+/* 推荐问题容器：chip-group（size=lg, columns=1）内部自绘，这里只给全宽与上距 */
+.chat-empty-sugs {
+  width: 100%;
+  margin-top: var(--sp-5);
+}
+
+/* ---- ④ 输入区（§5.3）：surface 底、上 1rpx border、键盘抬升 transform 过渡 ---- */
+.chat-dock {
+  flex-shrink: 0;
+  background: var(--c-surface);
+  border-top: 1rpx solid var(--c-border);
+  transition: transform 240ms ease-out;
+}
+
+/* 快捷 chip 横滑行（与空态同组问题；键盘弹起时由 js 隐藏） */
+.quick-scroll {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16rpx 32rpx 0;
+  white-space: nowrap;
+}
+.quick-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 72rpx;
+  padding: 0 28rpx;
+  margin-right: var(--sp-2);
+  vertical-align: top;
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  border-radius: var(--r-pill);
+  font-size: var(--fs-body-sm);
+  line-height: 1;
+}
+.quick-chip:last-child {
+  margin-right: var(--sp-4); /* 横滑末尾留白，滚动 padding-right 不可靠 */
+}
+.quick-chip-press {
+  opacity: .7;
+}
+
+/* 输入行：textarea（surface-2 / r-md，auto-height 最多约 4 行）+ 72rpx 圆形发送钮 */
+.chat-input-row {
+  display: flex;
+  align-items: flex-end;
+  padding: 16rpx 32rpx;
+}
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  min-height: 72rpx;
+  max-height: 192rpx;
+  box-sizing: border-box;
+  padding: 14rpx 24rpx;
+  background: var(--c-surface-2);
+  border-radius: var(--r-md);
+  font-size: var(--fs-body-lg);
+  line-height: 1.5;
+  color: var(--c-text-1);
+}
+.chat-send {
+  width: 72rpx;
+  height: 72rpx;
+  margin-left: var(--sp-2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--c-primary);
+  color: var(--c-on-primary);
+  font-size: var(--fs-h3);
+  line-height: 1;
+}
+/* 输入为空或发送中：禁用态只降透明度（§4.2） */
+.chat-send-off {
+  opacity: .4;
+}

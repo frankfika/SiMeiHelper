@@ -1,0 +1,129 @@
+/* pages/sos — 页面私有样式（颜色一律 var(--c-*)，不重定义全局类） */
+
+/* ---- 急症卡（bubble-safety 全局类只组合不重定义） ---- */
+.sos-alert {
+  margin-bottom: var(--sp-3);
+}
+.sos-alert-text {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-body-sm);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.sos-alert-btn {
+  margin-top: var(--sp-2);
+}
+
+/* ---- ① 顶部说明（§3.10.1） ---- */
+.sos-intro {
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-body);
+  color: var(--c-text-2);
+}
+
+/* ---- ② 红旗行（§3.10.2：描述 + 右侧「有 / 没有」） ---- */
+.sos-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-bottom: 1rpx solid var(--c-border);
+}
+.sos-row:last-child {
+  border-bottom: none;
+}
+.sos-row-text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--c-text-1);
+}
+.sos-row-btns {
+  display: flex;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
+/* chip 默认中性；点「有」danger、「没有」primary，带描边强调已选状态 */
+.sos-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 64rpx;
+  padding: 0 28rpx;
+  box-sizing: border-box;
+  border: 2rpx solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--c-surface-2);
+  color: var(--c-text-2);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+}
+.sos-chip-yes {
+  background: var(--c-danger-soft);
+  color: var(--c-danger);
+  border-color: var(--c-danger);
+}
+.sos-chip-no {
+  background: var(--c-primary-soft);
+  color: var(--c-primary);
+  border-color: var(--c-primary);
+}
+
+/* ---- ③ 缓解卡（§3.10.4） ---- */
+.relief-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--c-text-1);
+}
+.relief-group {
+  margin-top: var(--sp-3);
+}
+.relief-label {
+  margin-bottom: var(--sp-1);
+  font-size: var(--fs-body-sm);
+  font-weight: 600;
+  color: var(--c-text-2);
+}
+/* 与 article 页同一套圆点条目（页面私有类，非全局类重定义） */
+.kb-li {
+  position: relative;
+  margin-top: var(--sp-1);
+  padding-left: 30rpx;
+  font-size: var(--fs-body);
+  line-height: 1.7;
+  color: var(--c-text-1);
+}
+.kb-li::before {
+  content: '';
+  position: absolute;
+  left: 6rpx;
+  top: .66em;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: var(--c-primary);
+}
+.relief-foot {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-caption);
+  line-height: 1.6;
+  color: var(--c-text-3);
+}
+.relief-btn {
+  margin-top: var(--sp-3);
+}
+
+/* ---- ④ 底部固定小字（§3.10.5）；.page 自带 160rpx+ 底部内边距，不遮挡内容 ---- */
+.sos-foot {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(16rpx + env(safe-area-inset-bottom));
+  padding: 0 32rpx;
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--c-text-3);
+}

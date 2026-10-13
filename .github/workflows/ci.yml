@@ -1,0 +1,138 @@
+# SiMeiHelper CI — 三个独立 job，全部通过才合入
+#
+# 工作流设计（参照 RUNBOOK.md §七）：
+#   1. test    ：node tools/run-all.js（17 道闸门：12 测试套件 + 3 静态 + 集成 + 端到端 + 60 天旅程）
+#   2. static  ：JSON 合法性 / WXML 平衡 / 页面引用一致性 / 件套完整
+#   3. sanity  ：关键文件存在
+# 不引入任何编译/打包——纯 Node 自检，避免在 CI 跑慢/出错。
+
+name: check
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+  workflow_dispatch:    # 手动触发
+
+jobs:
+  # -------------------------------------------------------------------------
+  # 第一闸门：单元测试 + 安全语料库 + 集成测试
+  # -------------------------------------------------------------------------
+  test:
+    name: 单元 + 集成测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 一键运行所有 17 道质量门
+        run: node tools/run-all.js
+        timeout-minutes: 3
+
+      - name: 测试覆盖率摘要
+        if: always()
+        run: |
+          echo "### Test summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 套件 | 状态 |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          for t in test/*.js; do
+            name=$(basename "$t")
+            if node "$t" >/dev/null 2>&1; then
+              echo "| $name | ✓ |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| $name | ✗ |" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+  # -------------------------------------------------------------------------
+  # 第二闸门：JSON / WXML 静态检查（防止页面缺失或 JSON 损坏）
+  # -------------------------------------------------------------------------
+  static:
+    name: 静态检查（JSON / WXML 完整性 / 标签平衡）
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: JSON 合法性
+        run: |
+          set -e
+          for f in $(find . -name '*.json' -not -path './node_modules/*' -not -path './.git/*' -not -path './docs/*'); do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" && echo "  ✓ $f"
+          done
+      - name: WXML 标签平衡（属性内 > / 表达式 {{ }} / 注释 都正确处理）
+        run: node tools/wxml-check.js
+
+      - name: 页面 wxml/js 引用一致性（bindtap/bindinput handler 在 js 中已声明）
+        run: node tools/page-contract.js
+      - name: WXML / WXSS 件套完整（12 页 × 4 + 5 组件 × 4）
+        run: |
+          set -e
+          fail=0
+          for p in onboarding today log chat me dose trend plan article report sos settings; do
+            for ext in js json wxml wxss; do
+              if [ ! -f "pages/$p/$p.$ext" ]; then
+                echo "  ✗ pages/$p/$p.$ext 缺失"
+                fail=1
+              fi
+            done
+          done
+          for c in ring line-chart chip-group cup-grid insight-card; do
+            for ext in js json wxml wxss; do
+              if [ ! -f "components/$c/index.$ext" ]; then
+                echo "  ✗ components/$c/index.$ext 缺失"
+                fail=1
+              fi
+            done
+          done
+          exit $fail
+
+  # -------------------------------------------------------------------------
+  # 第三闸门：尺寸 sanity check（项目文件数、关键文件存在）
+  # -------------------------------------------------------------------------
+  sanity:
+    name: 项目结构 sanity
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - uses: actions/checkout@v4
+      - name: 关键文件存在
+        run: |
+          set -e
+          for f in README.md AGENTS.md CHANGELOG.md RUNBOOK.md E2E-CHECKLIST.md \
+                   app.js app.json app.wxss theme.json sitemap.json project.config.json \
+                   docs/01-PRD.md docs/02-UX.md docs/03-VISUAL.md docs/05-DATA.md \
+                   tools/check.js tools/simulator.js tools/demo-runner.js tools/run-all.js \
+                   data/kb.js; do
+            [ -f "$f" ] || { echo "  ✗ $f 缺失"; exit 1; }
+            echo "  ✓ $f"
+          done
+
+  # -------------------------------------------------------------------------
+  # 所有 job 通过才能合入
+  # -------------------------------------------------------------------------
+  all-must-pass:
+    name: 全部通过
+    needs: [test, static, sanity]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: 汇总
+        run: |
+          if [ "${{ needs.test.result }}" != "success" ] || \
+             [ "${{ needs.static.result }}" != "success" ] || \
+             [ "${{ needs.sanity.result }}" != "success" ]; then
+            echo "❌ 有闸门失败"
+            exit 1
+          fi
+          echo "✅ 三闸门全过：test=${{ needs.test.result }}, static=${{ needs.static.result }}, sanity=${{ needs.sanity.result }}"
